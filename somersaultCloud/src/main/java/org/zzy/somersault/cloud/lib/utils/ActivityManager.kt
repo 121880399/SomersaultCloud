@@ -82,6 +82,7 @@ class ActivityManager private constructor(): Application.ActivityLifecycleCallba
         return 0
     }
 
+
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
        mActivityStack.push(activity)
     }
