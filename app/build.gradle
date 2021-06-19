@@ -8,7 +8,7 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "org.zzy.somersault.cloud"
+        applicationId "org.somersault.cloud"
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
