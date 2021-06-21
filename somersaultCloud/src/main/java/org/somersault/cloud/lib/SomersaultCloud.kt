@@ -1,6 +1,7 @@
 package org.zzy.somersault.cloud.lib
 
 import android.app.Application
+import org.somersault.cloud.lib.interf.IFunctionPlugin
 import org.zzy.somersault.cloud.lib.utils.ActivityManager
 
 /**
@@ -11,7 +12,21 @@ import org.zzy.somersault.cloud.lib.utils.ActivityManager
  * 修订历史：
  * ================================================
  */
-class SomersaultCloud {
+class SomersaultCloud private constructor(){
+
+    companion object{
+        val instance = Holder.holder
+    }
+
+    private object Holder{
+        val holder = SomersaultCloud()
+    }
+
+    private val performanceList : ArrayList<IFunctionPlugin> = ArrayList()
+
+    private val uiList : ArrayList<IFunctionPlugin> = ArrayList()
+
+    private val AppInfoList : ArrayList<IFunctionPlugin> = ArrayList()
 
     /**
      * 初始化筋斗云
@@ -20,5 +35,23 @@ class SomersaultCloud {
      */
     fun init(app: Application){
         ActivityManager.instance.register(app)
+        registerPlugin()
     }
+
+    private fun registerPlugin(){
+
+    }
+
+    fun getPerformancePlugins():ArrayList<IFunctionPlugin>{
+        return performanceList
+    }
+
+    fun getUIPlugins():ArrayList<IFunctionPlugin>{
+        return uiList
+    }
+
+    fun getAppInfoPlugins():ArrayList<IFunctionPlugin>{
+        return AppInfoList
+    }
+
 }

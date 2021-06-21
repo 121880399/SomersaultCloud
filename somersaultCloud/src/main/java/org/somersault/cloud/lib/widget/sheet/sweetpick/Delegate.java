@@ -44,7 +44,13 @@ public abstract class Delegate implements View.OnClickListener {
      * @return
      */
     protected abstract View createView();
-    
+
+    /**
+    * 初始化数据
+    * 作者: ZhouZhengyi
+    * 创建时间: 2021/6/19 17:16
+    */
+    protected abstract void setData();
 
     protected void toggle() {
 

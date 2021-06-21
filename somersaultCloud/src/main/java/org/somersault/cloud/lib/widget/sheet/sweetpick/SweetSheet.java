@@ -53,6 +53,7 @@ public class SweetSheet {
 
 
     private void setup() {
+
         mDelegate.setBackgroundEffect(mEffect);
         mDelegate.setBackgroundClickEnable(mIsBgClickEnable);
     }
@@ -120,8 +121,7 @@ public class SweetSheet {
     }
 
 
-    protected enum Status {
-
+    public enum Status {
         SHOW, SHOWING,
         DISMISS, DISMISSING
     }
