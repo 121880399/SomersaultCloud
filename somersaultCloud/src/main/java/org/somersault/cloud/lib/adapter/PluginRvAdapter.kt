@@ -1,11 +1,14 @@
 package org.somersault.cloud.lib.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import androidx.recyclerview.widget.RecyclerView
 import org.somersault.cloud.lib.databinding.ItemPluginBinding
 import org.somersault.cloud.lib.holder.BaseBindingViewHolder
 import org.somersault.cloud.lib.interf.IFunctionPlugin
+import org.somersault.cloud.lib.widget.sheet.listener.SingleClickListener
 
 /**
  * ================================================
@@ -19,6 +22,8 @@ class PluginRvAdapter constructor() : RecyclerView.Adapter<BaseBindingViewHolder
 
     private var plugins: List<IFunctionPlugin>? = null
 
+    private var mOnItemClickListener : AdapterView.OnItemClickListener? = null
+
     constructor(plugins: List<IFunctionPlugin>) : this() {
         this.plugins = plugins
     }
@@ -29,6 +34,8 @@ class PluginRvAdapter constructor() : RecyclerView.Adapter<BaseBindingViewHolder
     }
 
     override fun onBindViewHolder(holder: BaseBindingViewHolder<ItemPluginBinding>, position: Int) {
+        holder.mBinding.root.setOnClickListener(mClickListener)
+        holder.mBinding.root.tag = position
         var plugin = plugins?.get(position)
         holder.mBinding.ivIcon.setImageResource(plugin!!.getIconResId())
         holder.mBinding.tvTitle.text = plugin!!.getTitle()
@@ -37,4 +44,15 @@ class PluginRvAdapter constructor() : RecyclerView.Adapter<BaseBindingViewHolder
     override fun getItemCount(): Int {
         return if(plugins == null) 0 else plugins!!.size
     }
+
+    fun setOnItemClickListener(onItemClickListener:AdapterView.OnItemClickListener){
+        this.mOnItemClickListener = onItemClickListener
+    }
+
+    private val mClickListener = SingleClickListener(View.OnClickListener {
+        val position = it.getTag()
+        if(mOnItemClickListener!=null){
+            mOnItemClickListener!!.onItemClick(null,it, position as Int, position as Long)
+        }
+    })
 }

@@ -1,7 +1,9 @@
 package org.somersault.cloud.lib.adapter
 
 import android.view.View
+import android.view.ViewGroup
 import androidx.viewpager.widget.PagerAdapter
+import org.somersault.cloud.lib.interf.IPageView
 
 /**
  * ================================================
@@ -11,15 +13,24 @@ import androidx.viewpager.widget.PagerAdapter
  * 修订历史：
  * ================================================
  */
-class CommonPagerAdapter : PagerAdapter() {
+class CommonPagerAdapter constructor(): PagerAdapter() {
 
-    override fun getCount(): Int {
-        TODO("Not yet implemented")
+    var mPagesView : List<IPageView>?  = null
+
+    constructor(pages : List<IPageView>):this(){
+        mPagesView = pages
     }
 
-    override fun isViewFromObject(view: View, `object`: Any): Boolean {
-        TODO("Not yet implemented")
+    override fun getCount(): Int =  mPagesView?.size ?: 0
+
+    override fun isViewFromObject(view: View, `object`: Any): Boolean = (view == `object`)
+
+    override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
+        container.removeView(mPagesView!![position].onCreateView(container))
     }
 
-
+    override fun instantiateItem(container: ViewGroup, position: Int): Any {
+        container.addView(mPagesView!![position].onCreateView(container))
+        return mPagesView!![position].onCreateView(container)
+    }
 }
