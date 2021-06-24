@@ -4,6 +4,8 @@ import android.app.Activity
 import android.app.Application
 import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
+import org.somersault.cloud.lib.interf.ICloud
+import org.somersault.cloud.lib.ui.Cloud
 import java.util.*
 
 /**
@@ -88,7 +90,7 @@ class ActivityManager private constructor(): Application.ActivityLifecycleCallba
     }
 
     override fun onActivityStarted(activity: Activity) {
-        TODO("Not yet implemented")
+        Cloud.instance.attach(activity)
     }
 
     override fun onActivityResumed(activity: Activity) {
@@ -100,7 +102,7 @@ class ActivityManager private constructor(): Application.ActivityLifecycleCallba
     }
 
     override fun onActivityStopped(activity: Activity) {
-        TODO("Not yet implemented")
+        Cloud.instance.detach(activity)
     }
 
     override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {

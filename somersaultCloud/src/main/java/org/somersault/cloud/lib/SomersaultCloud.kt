@@ -1,7 +1,10 @@
 package org.zzy.somersault.cloud.lib
 
+import android.app.Activity
 import android.app.Application
 import org.somersault.cloud.lib.interf.IFunctionPlugin
+import org.somersault.cloud.lib.ui.Cloud
+import org.somersault.cloud.lib.utils.ApplicationUtils
 import org.zzy.somersault.cloud.lib.utils.ActivityManager
 
 /**
@@ -35,6 +38,7 @@ class SomersaultCloud private constructor(){
      */
     fun init(app: Application){
         ActivityManager.instance.register(app)
+        ApplicationUtils.getInstance().application = app
         registerPlugin()
     }
 
@@ -52,6 +56,15 @@ class SomersaultCloud private constructor(){
 
     fun getAppInfoPlugins():ArrayList<IFunctionPlugin>{
         return AppInfoList
+    }
+
+    /**
+     * 显示筋斗云
+     * 作者:ZhouZhengyi
+     * 创建时间: 2021/6/23 8:48
+     */
+    fun show(activity : Activity){
+        Cloud.instance.attach(activity).add(activity)
     }
 
 }

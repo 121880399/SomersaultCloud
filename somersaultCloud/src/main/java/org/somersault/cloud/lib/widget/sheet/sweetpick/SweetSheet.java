@@ -53,7 +53,6 @@ public class SweetSheet {
 
 
     private void setup() {
-
         mDelegate.setBackgroundEffect(mEffect);
         mDelegate.setBackgroundClickEnable(mIsBgClickEnable);
     }
