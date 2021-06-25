@@ -8,7 +8,7 @@ import androidx.core.view.isNotEmpty
 import androidx.viewpager.widget.ViewPager
 import org.somersault.cloud.lib.R
 import org.somersault.cloud.lib.adapter.CommonPagerAdapter
-import org.somersault.cloud.lib.databinding.LayoutVpSweetBinding
+import org.somersault.cloud.lib.databinding.ScLayoutVpSweetBinding
 import org.somersault.cloud.lib.interf.IPageView
 import org.somersault.cloud.lib.widget.sheet.sweetpick.Delegate
 import org.somersault.cloud.lib.widget.sheet.sweetpick.SweetSheet
@@ -27,14 +27,14 @@ class Panel: Delegate() {
 
     private var mContentViewHeight : Int = 0
 
-    private var mLayoutBinding : LayoutVpSweetBinding ? = null
+    private var mLayoutBinding : ScLayoutVpSweetBinding ? = null
 
     private var mPages : ArrayList<IPageView>? = null
 
     private var mCurrentPage : IPageView? = null
 
     override fun createView(): View {
-        mLayoutBinding = LayoutVpSweetBinding.inflate(LayoutInflater.from(mParentVG.context))
+        mLayoutBinding = ScLayoutVpSweetBinding.inflate(LayoutInflater.from(mParentVG.context))
         mLayoutBinding!!.sweetView.animationListener = AnimationImp()
         if(mContentViewHeight > 0){
             mLayoutBinding!!.freeGrowUpParentF.setContentHeight(mContentViewHeight)
@@ -76,7 +76,7 @@ class Panel: Delegate() {
     }
 
     fun setContentHeight(height : Int){
-        if(height > 0 && mLayoutBinding!!.freeGrowUpParentF != null){
+        if(height > 0 && mLayoutBinding?.freeGrowUpParentF != null){
             mLayoutBinding!!.freeGrowUpParentF.setContentHeight(height)
         }else{
             mContentViewHeight = height

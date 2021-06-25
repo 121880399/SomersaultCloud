@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import androidx.recyclerview.widget.RecyclerView
-import org.somersault.cloud.lib.databinding.ItemPluginBinding
+import org.somersault.cloud.lib.databinding.ScItemPluginBinding
 import org.somersault.cloud.lib.holder.BaseBindingViewHolder
 import org.somersault.cloud.lib.interf.IFunctionPlugin
 import org.somersault.cloud.lib.widget.sheet.listener.SingleClickListener
@@ -18,7 +18,7 @@ import org.somersault.cloud.lib.widget.sheet.listener.SingleClickListener
  * 修订历史：
  * ================================================
  */
-class PluginRvAdapter constructor() : RecyclerView.Adapter<BaseBindingViewHolder<ItemPluginBinding>>() {
+class PluginRvAdapter constructor() : RecyclerView.Adapter<BaseBindingViewHolder<ScItemPluginBinding>>() {
 
     private var plugins: List<IFunctionPlugin>? = null
 
@@ -28,12 +28,12 @@ class PluginRvAdapter constructor() : RecyclerView.Adapter<BaseBindingViewHolder
         this.plugins = plugins
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseBindingViewHolder<ItemPluginBinding> {
-        val inflate = ItemPluginBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return BaseBindingViewHolder<ItemPluginBinding>(inflate)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseBindingViewHolder<ScItemPluginBinding> {
+        val inflate = ScItemPluginBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return BaseBindingViewHolder<ScItemPluginBinding>(inflate)
     }
 
-    override fun onBindViewHolder(holder: BaseBindingViewHolder<ItemPluginBinding>, position: Int) {
+    override fun onBindViewHolder(holder: BaseBindingViewHolder<ScItemPluginBinding>, position: Int) {
         holder.mBinding.root.setOnClickListener(mClickListener)
         holder.mBinding.root.tag = position
         var plugin = plugins?.get(position)

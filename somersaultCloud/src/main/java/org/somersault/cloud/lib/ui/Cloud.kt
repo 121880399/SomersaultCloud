@@ -72,7 +72,10 @@ class Cloud private constructor() : ICloud{
 
     override fun attach(container: FrameLayout?): ICloud {
         if(container == null || mCloudView ==null){
-            throw Exception("Container is empty")
+            //这里有可能存在container不为空，mCloudView为空的情况
+            //所以当container不为空的时候，就先记录
+            mContainer = container
+            return this
         }
         if(mCloudView?.parent == container){
             return this

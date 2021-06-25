@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import androidx.recyclerview.widget.GridLayoutManager
 import org.somersault.cloud.lib.adapter.PluginRvAdapter
-import org.somersault.cloud.lib.databinding.LayoutFunctionBinding
+import org.somersault.cloud.lib.databinding.ScLayoutFunctionBinding
 import org.somersault.cloud.lib.interf.IFunctionPlugin
 import org.somersault.cloud.lib.interf.IPageView
 import org.zzy.somersault.cloud.lib.SomersaultCloud
@@ -21,7 +21,7 @@ import org.zzy.somersault.cloud.lib.SomersaultCloud
  */
 class PerformancePageView : IPageView{
 
-    private var mBinding : LayoutFunctionBinding? = null
+    private var mBinding : ScLayoutFunctionBinding? = null
 
     private var mPlugins : ArrayList<IFunctionPlugin>? = null
 
@@ -29,7 +29,7 @@ class PerformancePageView : IPageView{
 
     override fun onCreateView(container: ViewGroup): View {
         if(mBinding == null){
-            mBinding = LayoutFunctionBinding.inflate(LayoutInflater.from(container.context),container,false)
+            mBinding = ScLayoutFunctionBinding.inflate(LayoutInflater.from(container.context),container,false)
             onViewCreate(mBinding!!.root)
         }
         return mBinding!!.root

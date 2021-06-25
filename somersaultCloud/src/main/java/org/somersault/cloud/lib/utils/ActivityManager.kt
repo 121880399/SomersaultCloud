@@ -94,11 +94,11 @@ class ActivityManager private constructor(): Application.ActivityLifecycleCallba
     }
 
     override fun onActivityResumed(activity: Activity) {
-        TODO("Not yet implemented")
+
     }
 
     override fun onActivityPaused(activity: Activity) {
-        TODO("Not yet implemented")
+
     }
 
     override fun onActivityStopped(activity: Activity) {
@@ -106,7 +106,7 @@ class ActivityManager private constructor(): Application.ActivityLifecycleCallba
     }
 
     override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
-        TODO("Not yet implemented")
+
     }
 
     override fun onActivityDestroyed(activity: Activity) {
