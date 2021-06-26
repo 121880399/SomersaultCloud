@@ -3,6 +3,7 @@ package org.zzy.somersault.cloud.lib
 import android.app.Activity
 import android.app.Application
 import org.somersault.cloud.lib.interf.IFunctionPlugin
+import org.somersault.cloud.lib.plugin.inspection.ActivityInspectionPlugin
 import org.somersault.cloud.lib.ui.Cloud
 import org.somersault.cloud.lib.utils.ApplicationUtils
 import org.zzy.somersault.cloud.lib.utils.ActivityManager
@@ -43,7 +44,10 @@ class SomersaultCloud private constructor(){
     }
 
     private fun registerPlugin(){
-
+        //注册性能检测插件
+        performanceList.add(ActivityInspectionPlugin())
+        //注册ui检查插件
+        //注册App信息插件
     }
 
     fun getPerformancePlugins():ArrayList<IFunctionPlugin>{

@@ -35,12 +35,12 @@ class UIPageView : IPageView{
     }
 
     private fun onViewCreate(view : View){
-        mPlugins = SomersaultCloud.instance.getPerformancePlugins()
+        mPlugins = SomersaultCloud.instance.getUIPlugins()
+        mBinding!!.tvTitle.text = "UI工具"
         if(mPlugins == null || mPlugins!!.isEmpty()){
             // TODO: 2021/6/20 显示空页面
             return
         }
-        mBinding!!.tvTitle.text = "UI工具"
         mBinding!!.rvFunction.layoutManager = GridLayoutManager(view.context,3)
         mBinding!!.rvFunction.setHasFixedSize(true)
         mAdapter = PluginRvAdapter(mPlugins!!)

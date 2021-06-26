@@ -29,7 +29,7 @@ class Panel: Delegate() {
 
     private var mLayoutBinding : ScLayoutVpSweetBinding ? = null
 
-    private var mPages : ArrayList<IPageView>? = null
+    private val mPages : ArrayList<IPageView> = ArrayList()
 
     private var mCurrentPage : IPageView? = null
 
@@ -43,10 +43,10 @@ class Panel: Delegate() {
     }
 
     override fun setData() {
-        mPages!!.add(PerformancePageView())
-        mPages!!.add(UIPageView())
-        mPages!!.add(AppInfoPageView())
-        mLayoutBinding!!.viewPager.adapter = CommonPagerAdapter(mPages!!)
+        mPages.add(PerformancePageView())
+        mPages.add(UIPageView())
+        mPages.add(AppInfoPageView())
+        mLayoutBinding!!.viewPager.adapter = CommonPagerAdapter(mPages)
         mLayoutBinding!!.indicatorView.setViewPager(mLayoutBinding!!.viewPager)
         mLayoutBinding!!.viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener{
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
@@ -54,7 +54,7 @@ class Panel: Delegate() {
             }
 
             override fun onPageSelected(position: Int) {
-                mCurrentPage = mPages!![position]
+                mCurrentPage = mPages[position]
             }
 
             override fun onPageScrollStateChanged(state: Int) {
@@ -87,8 +87,9 @@ class Panel: Delegate() {
         override fun onStart() {
             mLayoutBinding!!.freeGrowUpParentF.reset()
             mStatus = SweetSheet.Status.SHOWING
-            mLayoutBinding!!.sliderIM.visibility = View.INVISIBLE
-            mLayoutBinding!!.indicatorView.visibility = View.INVISIBLE
+            mLayoutBinding?.sliderIM?.visibility = View.INVISIBLE
+            mLayoutBinding?.indicatorView?.visibility = View.INVISIBLE
+            mLayoutBinding?.viewPager?.visibility = View.INVISIBLE
         }
 
         override fun onEnd() {
@@ -108,7 +109,7 @@ class Panel: Delegate() {
                     0F,
                     mLayoutBinding!!.sliderIM.width.toFloat()
                 )
-
+                mLayoutBinding?.viewPager?.visibility = View.VISIBLE
             }
         }
 

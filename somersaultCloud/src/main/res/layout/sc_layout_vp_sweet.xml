@@ -16,7 +16,7 @@
 
         <org.somersault.cloud.lib.widget.sheet.widget.SweetView
             android:id="@+id/sweetView"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
         <org.somersault.cloud.lib.widget.sheet.widget.IndicatorView
@@ -29,10 +29,10 @@
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/viewPager"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_marginTop="42dp"
-            android:clipChildren="false"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="80dp"
+            android:layoutAnimation="@anim/rv_layout_animation"
             android:overScrollMode="never"/>
 
         <org.somersault.cloud.lib.widget.sheet.widget.CRImageView

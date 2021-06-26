@@ -17,6 +17,7 @@ class CommonPagerAdapter constructor(): PagerAdapter() {
 
     var mPagesView : List<IPageView>?  = null
 
+
     constructor(pages : List<IPageView>):this(){
         mPagesView = pages
     }

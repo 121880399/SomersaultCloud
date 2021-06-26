@@ -15,7 +15,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="内存监控"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:layout_marginTop="6dp"
+        android:textColor="@android:color/black"
+        android:layout_gravity="center_horizontal"
         />
 </LinearLayout>

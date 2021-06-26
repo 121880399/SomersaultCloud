@@ -29,8 +29,8 @@ class PerformancePageView : IPageView{
 
     override fun onCreateView(container: ViewGroup): View {
         if(mBinding == null){
-            mBinding = ScLayoutFunctionBinding.inflate(LayoutInflater.from(container.context),container,false)
-            onViewCreate(mBinding!!.root)
+            mBinding = ScLayoutFunctionBinding.inflate(LayoutInflater.from(container.context),null,false)
+            onViewCreate(mBinding!!.rvFunction)
         }
         return mBinding!!.root
     }
