@@ -3,9 +3,8 @@ package org.somersault.cloud
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
-import org.somersault.cloud.R
 import org.somersault.cloud.databinding.ActivityMainBinding
-import org.zzy.somersault.cloud.lib.SomersaultCloud
+import org.somersault.cloud.lib.SomersaultCloud
 
 class MainActivity : AppCompatActivity() {
 

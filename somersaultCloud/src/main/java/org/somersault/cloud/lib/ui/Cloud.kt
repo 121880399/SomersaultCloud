@@ -5,7 +5,6 @@ import android.content.Context
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.core.view.ViewCompat
 import org.somersault.cloud.lib.R
@@ -15,8 +14,7 @@ import org.somersault.cloud.lib.utils.ScreenUtils
 import org.somersault.cloud.lib.widget.floatview.CloudCoordinator
 import org.somersault.cloud.lib.widget.floatview.CloudTrashLayout
 import org.somersault.cloud.lib.widget.floatview.CloudView
-import org.zzy.somersault.cloud.lib.utils.ActivityManager
-import java.lang.Exception
+import org.somersault.cloud.lib.manager.ActivityManager
 
 /**
  * ================================================
@@ -66,7 +64,7 @@ class Cloud private constructor() : ICloud{
     }
 
     override fun attach(activity: Activity): ICloud {
-        attach(getRootView(activity))
+        attach(ActivityManager.instance.getRootView(activity))
         return this
     }
 
@@ -91,7 +89,7 @@ class Cloud private constructor() : ICloud{
     }
 
     override fun detach(activity: Activity): ICloud {
-        detach(getRootView(activity))
+        detach(ActivityManager.instance.getRootView(activity))
         return this
     }
 
@@ -166,18 +164,6 @@ class Cloud private constructor() : ICloud{
         mCoordinatorLayout = CloudCoordinator.Builder()
             .setTrashView(mTrashLayout)
             .build()
-    }
-
-    private fun getRootView(activity : Activity):FrameLayout?{
-        if(activity == null){
-            return null
-        }
-        try{
-            return activity.window.decorView.findViewById(android.R.id.content)
-        }catch (e : Exception){
-            e.printStackTrace()
-        }
-        return null
     }
 
     private fun removeView(view: View){

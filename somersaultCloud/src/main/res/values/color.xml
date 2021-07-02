@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="indicator_normal">#fff0f0f0</color>
+    <color name="sc_indicator_normal">#fff0f0f0</color>
 
-    <color name="indicator_select">#969696</color>
-    <color name="white">#ffffffff</color>
-    <color name="theme_gray">#F5F5F5</color>
-    <color name="slider_color_normal">#ffa6a6a6</color>
-    <color name="slider_color">#ff969696</color>
+    <color name="sc_indicator_select">#969696</color>
+    <color name="sc_white">#ffffffff</color>
+    <color name="sc_theme_gray">#F5F5F5</color>
+    <color name="sc_slider_color_normal">#ffa6a6a6</color>
+    <color name="sc_slider_color">#ff969696</color>
+    <color name="sc_activity_inspection_background_stroke">#CCCCCC</color>
+    <color name="sc_default_text_color_1e242a">#1E242A</color>
 </resources>

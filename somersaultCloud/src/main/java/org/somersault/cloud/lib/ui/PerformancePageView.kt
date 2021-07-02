@@ -9,7 +9,7 @@ import org.somersault.cloud.lib.adapter.PluginRvAdapter
 import org.somersault.cloud.lib.databinding.ScLayoutFunctionBinding
 import org.somersault.cloud.lib.interf.IFunctionPlugin
 import org.somersault.cloud.lib.interf.IPageView
-import org.zzy.somersault.cloud.lib.SomersaultCloud
+import org.somersault.cloud.lib.SomersaultCloud
 
 /**
  * ================================================

@@ -7,7 +7,7 @@
            android:shape="line"
         >
         <corners android:radius="1px"/>
-        <stroke android:color="@color/slider_color"
+        <stroke android:color="@color/sc_slider_color"
                 android:width="2dp"
             />
         <size android:height="2dp"/>
@@ -19,7 +19,7 @@
                android:shape="line"
             >
             <corners android:radius="1px"/>
-            <stroke android:color="@color/slider_color_normal"
+            <stroke android:color="@color/sc_slider_color_normal"
                     android:width="2dp"
                 />
             <size android:height="2dp"/>

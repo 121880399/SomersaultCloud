@@ -1,7 +1,7 @@
 package org.somersault.cloud
 
 import android.app.Application
-import org.zzy.somersault.cloud.lib.SomersaultCloud
+import org.somersault.cloud.lib.SomersaultCloud
 
 /**
  * ================================================

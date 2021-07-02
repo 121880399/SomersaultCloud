@@ -1,5 +1,6 @@
 package org.somersault.cloud.lib.utils;
 
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.util.TypedValue;
 
@@ -46,5 +47,9 @@ public class ScreenUtils {
     public static float dp2px(float dp) {
         Resources res = ApplicationUtils.getInstance().getApplication().getResources();
         return TypedValue.applyDimension(1, dp, res.getDisplayMetrics());
+    }
+
+    public static boolean isPortrait(){
+        return ApplicationUtils.getInstance().getApplication().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
     }
 }

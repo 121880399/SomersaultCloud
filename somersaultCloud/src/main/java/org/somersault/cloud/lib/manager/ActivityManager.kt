@@ -1,11 +1,11 @@
-package org.zzy.somersault.cloud.lib.utils
+package org.somersault.cloud.lib.manager
 
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
-import androidx.fragment.app.FragmentActivity
-import org.somersault.cloud.lib.interf.ICloud
+import android.widget.FrameLayout
 import org.somersault.cloud.lib.ui.Cloud
+import java.lang.Exception
 import java.util.*
 
 /**
@@ -91,10 +91,10 @@ class ActivityManager private constructor(): Application.ActivityLifecycleCallba
 
     override fun onActivityStarted(activity: Activity) {
         Cloud.instance.attach(activity)
+        FloatViewManager.instance.onActivityStart(activity)
     }
 
     override fun onActivityResumed(activity: Activity) {
-
     }
 
     override fun onActivityPaused(activity: Activity) {
@@ -103,6 +103,7 @@ class ActivityManager private constructor(): Application.ActivityLifecycleCallba
 
     override fun onActivityStopped(activity: Activity) {
         Cloud.instance.detach(activity)
+        FloatViewManager.instance.onActivityStop(activity)
     }
 
     override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
@@ -111,5 +112,17 @@ class ActivityManager private constructor(): Application.ActivityLifecycleCallba
 
     override fun onActivityDestroyed(activity: Activity) {
         mActivityStack.remove(activity)
+    }
+
+    fun getRootView(activity : Activity): FrameLayout?{
+        if(activity == null){
+            return null
+        }
+        try{
+            return activity.window.decorView.findViewById(android.R.id.content)
+        }catch (e : Exception){
+            e.printStackTrace()
+        }
+        return null
     }
 }

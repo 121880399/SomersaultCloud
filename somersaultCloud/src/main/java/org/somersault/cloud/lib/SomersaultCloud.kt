@@ -1,12 +1,13 @@
-package org.zzy.somersault.cloud.lib
+package org.somersault.cloud.lib
 
 import android.app.Activity
 import android.app.Application
 import org.somersault.cloud.lib.interf.IFunctionPlugin
-import org.somersault.cloud.lib.plugin.inspection.ActivityInspectionPlugin
+import org.somersault.cloud.lib.manager.FloatViewManager
+import org.somersault.cloud.lib.plugin.ActivityInspectionPlugin
 import org.somersault.cloud.lib.ui.Cloud
 import org.somersault.cloud.lib.utils.ApplicationUtils
-import org.zzy.somersault.cloud.lib.utils.ActivityManager
+import org.somersault.cloud.lib.manager.ActivityManager
 
 /**
  * ================================================
@@ -41,6 +42,8 @@ class SomersaultCloud private constructor(){
         ActivityManager.instance.register(app)
         ApplicationUtils.getInstance().application = app
         registerPlugin()
+        //初始化功能悬浮窗管理器
+        FloatViewManager.instance.init(app)
     }
 
     private fun registerPlugin(){
