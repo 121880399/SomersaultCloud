@@ -6,6 +6,7 @@ import org.somersault.cloud.lib.interf.IFunctionPlugin
 import org.somersault.cloud.lib.manager.FloatViewManager
 import org.somersault.cloud.lib.ui.activity.ActivityInspectionView
 import org.somersault.cloud.lib.manager.ActivityManager
+import org.somersault.cloud.lib.ui.activity.HandlerHooker
 
 /**
  * ================================================
@@ -43,6 +44,7 @@ class ActivityInspectionPlugin : IFunctionPlugin{
             view = null
             isOpen = false
         }else{
+            HandlerHooker.doHook()
             view = ActivityInspectionView()
             view?.init(currentActivity)
             FloatViewManager.instance.attach(view!!)

@@ -2,6 +2,7 @@ package org.somersault.cloud.lib
 
 import android.app.Activity
 import android.app.Application
+import me.weishu.reflection.Reflection
 import org.somersault.cloud.lib.interf.IFunctionPlugin
 import org.somersault.cloud.lib.manager.FloatViewManager
 import org.somersault.cloud.lib.plugin.ActivityInspectionPlugin
@@ -39,6 +40,8 @@ class SomersaultCloud private constructor(){
      * 创建时间: 2021/6/18 16:03
      */
     fun init(app: Application){
+        //解除系统隐藏api调用限制
+        Reflection.unseal(app)
         ActivityManager.instance.register(app)
         ApplicationUtils.getInstance().application = app
         registerPlugin()

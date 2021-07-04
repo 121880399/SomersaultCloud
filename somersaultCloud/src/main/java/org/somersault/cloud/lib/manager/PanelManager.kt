@@ -1,4 +1,4 @@
-package org.somersault.cloud.lib.manager
+ package org.somersault.cloud.lib.manager
 
 import android.view.ViewGroup
 import org.somersault.cloud.lib.ui.Panel

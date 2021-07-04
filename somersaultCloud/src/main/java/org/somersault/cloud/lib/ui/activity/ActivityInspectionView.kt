@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import org.somersault.cloud.lib.R
 import org.somersault.cloud.lib.databinding.ScViewActivityInspectionBinding
+import org.somersault.cloud.lib.manager.ActivityCostManager
 import org.somersault.cloud.lib.manager.FloatViewManager
 import org.somersault.cloud.lib.plugin.ActivityInspectionPlugin
 import org.somersault.cloud.lib.ui.BaseFloatView
@@ -17,12 +18,13 @@ import org.somersault.cloud.lib.utils.ResUtils
 import org.somersault.cloud.lib.utils.ScreenUtils
 import org.somersault.cloud.lib.widget.CustomLayoutParams
 import org.somersault.cloud.lib.manager.ActivityManager
+import org.somersault.cloud.lib.manager.UiHierarchyManager
 
 /**
  * ================================================
  * 作    者：ZhouZhengyi
  * 创建日期：2021/7/2 8:58
- * 描    述：
+ * 描    述：Activity检查悬浮窗界面
  * 修订历史：
  * ================================================
  */
@@ -65,9 +67,21 @@ class ActivityInspectionView: BaseFloatView() {
             }else{
                 mBinding?.tvFragmentName?.visibility = View.GONE
             }
+            mBinding?.tvPauseCost?.text = ResUtils.getString(R.string.sc_activity_inspection_pause_cost,ActivityCostManager.instance.getPauseCost())
+            mBinding?.tvLaunchCost?.text = ResUtils.getString(R.string.sc_activity_inspection_launch_cost,ActivityCostManager.instance.getLaunchCost())
+            mBinding?.tvRenderCost?.text = ResUtils.getString(R.string.sc_activity_inspection_render_cost,ActivityCostManager.instance.getRenderCost())
+            mBinding?.tvOtherCost?.text = ResUtils.getString(R.string.sc_activity_inspection_other_cost,ActivityCostManager.instance.getOtherCost())
+            mBinding?.tvTotalCost?.text = ResUtils.getString(R.string.sc_activity_inspection_total_cost,ActivityCostManager.instance.getTotalCost())
+            mBinding?.tvHierarchy?.text = ResUtils.getString(R.string.sc_activity_inspection_hierarchy,UiHierarchyManager.instance.getMaxHierarchy(topActivity))
         }else{
-            mBinding?.tvActivityName?.text = ""
+            mBinding?.tvActivityName?.text = "获取不到当前Activity"
             mBinding?.tvFragmentName?.visibility = View.GONE
+            mBinding?.tvHierarchy?.visibility = View.GONE
+            mBinding?.tvLaunchCost?.visibility = View.GONE
+            mBinding?.tvOtherCost?.visibility = View.GONE
+            mBinding?.tvPauseCost?.visibility = View.GONE
+            mBinding?.tvRenderCost?.visibility = View.GONE
+            mBinding?.tvTotalCost?.visibility = View.GONE
         }
     }
 

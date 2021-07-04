@@ -31,6 +31,9 @@ class ActivityManager private constructor(): Application.ActivityLifecycleCallba
      * **/
     private val mActivityStack = Stack<Activity>()
 
+    private var startedActivityCount : Int = 0
+
+    private var createdActivityCount : Int = 0
 
     /**
      * 注册
@@ -86,10 +89,12 @@ class ActivityManager private constructor(): Application.ActivityLifecycleCallba
 
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+        createdActivityCount++
        mActivityStack.push(activity)
     }
 
     override fun onActivityStarted(activity: Activity) {
+        startedActivityCount++
         Cloud.instance.attach(activity)
         FloatViewManager.instance.onActivityStart(activity)
     }
@@ -98,12 +103,18 @@ class ActivityManager private constructor(): Application.ActivityLifecycleCallba
     }
 
     override fun onActivityPaused(activity: Activity) {
-
     }
 
     override fun onActivityStopped(activity: Activity) {
+        startedActivityCount--
         Cloud.instance.detach(activity)
         FloatViewManager.instance.onActivityStop(activity)
+        if(startedActivityCount ==0 && !activity.isChangingConfigurations && !activity.isFinishing){
+            //用户按home键切换到后台，startedActivityCount的数量一定为0
+            //因为切换横竖屏也会走onStop方法，所以这里要判断是否是切换横竖屏
+            //因为结束一个Activity也要走onStop方法，所以这里要判断是否是结束Activity
+            ActivityCostManager.instance.onBackground()
+        }
     }
 
     override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
@@ -111,7 +122,12 @@ class ActivityManager private constructor(): Application.ActivityLifecycleCallba
     }
 
     override fun onActivityDestroyed(activity: Activity) {
+        createdActivityCount--
         mActivityStack.remove(activity)
+        if(createdActivityCount == 0 && !activity.isChangingConfigurations){
+            //退出App时createdActivityCount一定为0
+            //切换横竖屏也会走onDestory方法，所以这里要做判断
+        }
     }
 
     fun getRootView(activity : Activity): FrameLayout?{

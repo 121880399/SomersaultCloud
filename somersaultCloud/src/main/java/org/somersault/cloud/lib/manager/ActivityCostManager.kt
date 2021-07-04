@@ -9,11 +9,12 @@ import android.os.SystemClock
  * 描    述：Activity启动耗时管理类
  * 主要通过三个阶段来分析耗时，以A Activity打开B Activity为例，
  * 第一阶段是A的onPause耗时
- * 第二阶段是B的Launch操作，主要是onCreate和onResume耗时
- * 第三阶段是B的window渲染操作，调用DecorView的post方法进行统计
+ * 第二阶段是B的Launch操作，主要是onCreate和onResume耗时(onCreate-onResume)
+ * 第三阶段是B的window渲染操作，调用DecorView的post方法进行统计(onResume-第一帧绘制完成)
  * 这里忽略ASM,WMS进行通讯的耗时，主要是因为这部分耗时无法通过非侵入式的方法统计，
  * 而且用户也无法对这部分耗时做优化，除非重写Activity调用AMS的逻辑
  * 所以总耗时=pause+launch+render+other
+ * https://mp.weixin.qq.com/s/Rq3aTBMV4drU1KGXaO84SA
  * 修订历史：
  * ================================================
  */
@@ -91,6 +92,15 @@ class ActivityCostManager private constructor(){
     }
 
     /**
+     * 进入后台将开始时间设置为0
+     * 作者: ZhouZhengyi
+     * 创建时间: 2021/7/3 8:06
+     */
+    fun onBackground(){
+        mStartTime = 0
+    }
+
+    /**
      * 启动新Activity后调用该方法
      * 作者:ZhouZhengyi
      * 创建时间: 2021/7/2 17:33
@@ -104,6 +114,73 @@ class ActivityCostManager private constructor(){
     fun render(){
         mRenderStartTime = SystemClock.elapsedRealtime()
         val topActivity = ActivityManager.instance.getTopActivity()
+        if(topActivity!=null && topActivity.window !=null){
+            mCurrentActivity = topActivity.javaClass.simpleName
+            //第一次post在performTraversals开始被执行，执行时机早于measure,layout,draw
+            //所以需要再post一次，等带measure,layout,draw完成之后执行rendEnd方法
+            //这时候第一帧就绘制完成
+            topActivity?.window?.decorView?.post {
+                topActivity?.window?.decorView?.post {
+                    renderEnd()
+                }
+            }
+        }else{
+            renderEnd()
+        }
+    }
+
+    fun renderEnd(){
+        //计算渲染耗时
+        mRenderCostTime = SystemClock.elapsedRealtime() - mRenderStartTime
+        //计算总耗时
+        mTotalCostTime = SystemClock.elapsedRealtime() - mStartTime
+        //计算其他耗时，可能是于AMS通信之类的耗时
+        mOtherCostTime = mTotalCostTime - mPauseCostTime - mLaunchCostTime - mRenderCostTime
+    }
+
+    /**
+    * 得到pause耗时
+    * 作者: ZhouZhengyi
+    * 创建时间: 2021/7/4 9:48
+    */
+    fun getPauseCost():Long{
+        return mPauseCostTime
+    }
+
+    /**
+    * 得到启动耗时
+    * 作者: ZhouZhengyi
+    * 创建时间: 2021/7/4 9:49
+    */
+    fun getLaunchCost():Long{
+        return mLaunchCostTime
+    }
+
+    /**
+    * 得到渲染耗时
+    * 作者: ZhouZhengyi
+    * 创建时间: 2021/7/4 9:49
+    */
+    fun getRenderCost():Long{
+        return mRenderCostTime
+    }
+
+    /**
+    * 得到总耗时
+    * 作者: ZhouZhengyi
+    * 创建时间: 2021/7/4 9:49
+    */
+    fun getTotalCost():Long{
+        return mTotalCostTime
+    }
+
+    /**
+    * 得到其它耗时
+    * 作者: ZhouZhengyi
+    * 创建时间: 2021/7/4 9:49
+    */
+    fun getOtherCost():Long{
+        return mOtherCostTime
     }
 
 }
