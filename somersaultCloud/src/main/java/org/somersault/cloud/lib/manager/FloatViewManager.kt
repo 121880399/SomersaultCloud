@@ -6,6 +6,7 @@ import android.content.res.Configuration
 import android.graphics.Point
 import android.util.ArrayMap
 import android.view.View
+import android.view.ViewGroup
 import org.somersault.cloud.lib.been.FvCurrentPositionInfo
 import org.somersault.cloud.lib.been.FvLastPositionInfo
 import org.somersault.cloud.lib.ui.BaseFloatView
@@ -129,6 +130,9 @@ class FloatViewManager private constructor() {
             }
             //表示当前悬浮窗已经在当前Activity显示
             currentActivityFloatViews[floatView.mTag] = floatView
+            if(floatView.getFloatView()?.parent != null){
+                (floatView.getFloatView()?.parent as ViewGroup).removeView(floatView.getFloatView())
+            }
             //将悬浮窗添加到当前Activity的根布局
             ActivityManager.instance.getRootView(currentActivity!!)?.addView(floatView.getFloatView())
             floatView.getFloatView()?.postDelayed(Runnable {

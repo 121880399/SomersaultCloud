@@ -1,5 +1,6 @@
 package org.somersault.cloud
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -16,6 +17,13 @@ class MainActivity : AppCompatActivity() {
         setContentView(mBinding!!.root)
         mBinding?.btnFloat?.setOnClickListener {
             SomersaultCloud.instance.show(this)
+        }
+        mBinding?.btnJump?.setOnClickListener {
+            val intent = Intent(
+               this,
+                SecondActivity::class.java
+            )
+            startActivity(intent)
         }
     }
 }

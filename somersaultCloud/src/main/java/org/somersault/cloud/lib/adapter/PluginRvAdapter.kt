@@ -52,7 +52,7 @@ class PluginRvAdapter constructor() : RecyclerView.Adapter<BaseBindingViewHolder
     private val mClickListener = SingleClickListener(View.OnClickListener {
         val position = it.getTag()
         if(mOnItemClickListener!=null){
-            mOnItemClickListener!!.onItemClick(null,it, position as Int, position as Long)
+            mOnItemClickListener!!.onItemClick(null,it, position as Int, (position%3).toLong())
         }
     })
 }

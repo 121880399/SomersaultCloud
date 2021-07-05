@@ -171,4 +171,8 @@ class Cloud private constructor() : ICloud{
             mContainer?.removeView(view)
         }
     }
+
+    fun dismiss(){
+        mPanelManager?.dismiss()
+    }
 }
