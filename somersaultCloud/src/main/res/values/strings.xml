@@ -2,10 +2,10 @@
 <resources>
     <string name="sc_activity_inspection_activity_name">当前Activity:%s</string>
     <string name="sc_activity_inspection_fragment_name">可见Fragment:%s</string>
-    <string name="sc_activity_inspection_pause_cost">Pause cost:%d</string>
-    <string name="sc_activity_inspection_launch_cost">Launch cost:%d</string>
-    <string name="sc_activity_inspection_render_cost">Render cost:%d</string>
-    <string name="sc_activity_inspection_other_cost">Other cost:%d</string>
-    <string name="sc_activity_inspection_total_cost">总耗时:%d</string>
+    <string name="sc_activity_inspection_pause_cost">Pause cost:%dms</string>
+    <string name="sc_activity_inspection_launch_cost">Launch cost:%dms</string>
+    <string name="sc_activity_inspection_render_cost">Render cost:%dms</string>
+    <string name="sc_activity_inspection_other_cost">Other cost:%dms</string>
+    <string name="sc_activity_inspection_total_cost">总耗时:%dms</string>
     <string name="sc_activity_inspection_hierarchy">布局层级:%d</string>
 </resources>

@@ -2,12 +2,14 @@ package org.somersault.cloud.lib.ui
 
 import android.content.Context
 import android.content.res.Configuration
+import android.text.TextUtils
 import android.view.Gravity
 import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.FrameLayout
 import org.somersault.cloud.lib.been.FvLastPositionInfo
 import org.somersault.cloud.lib.interf.IFloatView
+import org.somersault.cloud.lib.interf.OnTouchEventListener
 import org.somersault.cloud.lib.manager.FloatViewManager
 import org.somersault.cloud.lib.utils.ScreenUtils
 import org.somersault.cloud.lib.widget.CloudFrameLayout
@@ -22,7 +24,7 @@ import java.lang.Exception
  * 修订历史：
  * ================================================
  */
-abstract class BaseFloatView : IFloatView {
+abstract class BaseFloatView : IFloatView, OnTouchEventListener {
 
     /**
      * 悬浮窗布局 会将xml中的布局封装一层，最后添加到rootView中
@@ -72,6 +74,8 @@ abstract class BaseFloatView : IFloatView {
      */
     private var mCustomLayoutParams: CustomLayoutParams? = null
 
+    private val mTouchProxy = TouchProxy(this)
+
     private val mOnGlobalLayoutListener: ViewTreeObserver.OnGlobalLayoutListener = ViewTreeObserver.OnGlobalLayoutListener {
         if (mFloatView != null) {
             //每次布局发生变动重新赋值
@@ -113,6 +117,14 @@ abstract class BaseFloatView : IFloatView {
             mChildView = onCreateView(context)
             //将xml中布局添加进悬浮窗父布局
             mFloatView?.addView(mChildView)
+            //设置手势拦截
+            mFloatView?.setOnTouchListener(View.OnTouchListener { v, event ->
+                if(mFloatView != null){
+                    return@OnTouchListener mTouchProxy.onTouchEvent(v,event)
+                }else{
+                    return@OnTouchListener false
+                }
+            })
             //调用onViewCreated
             onViewCreated(mFloatView!!)
             mCustomLayoutParams = CustomLayoutParams()
@@ -249,5 +261,88 @@ abstract class BaseFloatView : IFloatView {
         mLastPositionInfo?.setTopMargin(params.topMargin)
 
         FloatViewManager.instance.saveCurrentPosition(mTag,params.leftMargin,params.topMargin)
+        mFloatView?.layoutParams = params
+    }
+
+    override fun onMove(x: Int, y: Int, dx: Int, dy: Int) {
+        if(!canDrag()){
+            return
+        }
+        mLayoutParams!!.leftMargin += dx
+        mLayoutParams!!.topMargin += dy
+        updateViewLayout(mTag)
+    }
+
+    override fun onUp(x: Int, y: Int) {
+        if(!canDrag()){
+            return
+        }
+        //手指抬起时保存当前悬浮窗位置
+        FloatViewManager.instance.saveCurrentPosition(mTag,mLayoutParams!!.leftMargin,mLayoutParams!!.topMargin)
+    }
+
+    override fun onDown(x: Int, y: Int) {
+       if(!canDrag()){
+           return
+       }
+    }
+
+    fun updateViewLayout(tag:String){
+        if(mFloatView == null || mChildView == null || mLayoutParams == null){
+            return
+        }
+        //更新位置前先保存当前信息
+        mLastPositionInfo?.setPortrait()
+        mLastPositionInfo?.setLeftMargin(mLayoutParams!!.leftMargin)
+        mLastPositionInfo?.setTopMargin(mLayoutParams!!.topMargin)
+        mLayoutParams?.width = mFloatViewWidth
+        mLayoutParams?.height = mFloatViewHeight
+        limitBorderLine()
+        mFloatView?.layoutParams = mLayoutParams
+    }
+
+    private fun limitBorderLine(){
+        if(mLayoutParams!!.topMargin <= 0){
+            mLayoutParams?.topMargin = 0
+        }
+        if(ScreenUtils.isPortrait()){
+            if(mLayoutParams!!.topMargin >= getScreenLongSideLength() - mFloatViewHeight){
+                mLayoutParams?.topMargin = getScreenLongSideLength() - mFloatViewHeight
+            }
+        }else{
+            if(mLayoutParams!!.topMargin >= getScreenShortSideLength() - mFloatViewHeight){
+                mLayoutParams?.topMargin = getScreenShortSideLength() - mFloatViewHeight
+            }
+        }
+
+        if(mLayoutParams!!.leftMargin <= 0){
+            mLayoutParams?.leftMargin = 0
+        }
+
+        if(ScreenUtils.isPortrait()){
+            if(mLayoutParams!!.leftMargin >= getScreenShortSideLength() - mFloatViewHeight){
+                mLayoutParams?.leftMargin = getScreenShortSideLength() - mFloatViewHeight
+            }
+        }else{
+            if(mLayoutParams!!.leftMargin >= getScreenLongSideLength() - mFloatViewHeight){
+                mLayoutParams?.leftMargin = getScreenLongSideLength() - mFloatViewHeight
+            }
+        }
+    }
+
+    fun getScreenLongSideLength():Int{
+        return if(ScreenUtils.isPortrait()){
+            ScreenUtils.getScreenHeight()
+        }else{
+            ScreenUtils.getScreenWidth()
+        }
+    }
+
+    fun getScreenShortSideLength():Int{
+        return if(ScreenUtils.isPortrait()){
+            ScreenUtils.getScreenWidth()
+        }else{
+            ScreenUtils.getScreenHeight()
+        }
     }
 }
