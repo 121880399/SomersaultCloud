@@ -30,7 +30,7 @@ class UiHierarchyManager private constructor(){
     */
     fun getMaxHierarchy(activity:Activity):Int{
         val currentXmlRootView = ActivityManager.instance.getRootView(activity)?.getChildAt(0)
-        return getDeep(currentXmlRootView!!,1)
+        return getDeep(currentXmlRootView!!,0)
     }
 
     private fun getDeep(view:View,curr:Int):Int{
