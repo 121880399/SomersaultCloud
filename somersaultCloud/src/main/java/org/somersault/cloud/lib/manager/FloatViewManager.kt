@@ -213,6 +213,15 @@ class FloatViewManager private constructor() {
     }
 
     /**
+     * 获取当前Activity中所有的悬浮窗
+     * 作者:ZhouZhengyi
+     * 创建时间: 2021/7/8 8:54
+     */
+    fun getCurrentActivityFloatViews(activity: Activity):ArrayMap<String, BaseFloatView>?{
+        return mActivityFloatViews?.get(activity)
+    }
+
+    /**
      * 存储悬浮窗的当前位置
      * 作者:ZhouZhengyi
      * 创建时间: 2021/7/1 10:15

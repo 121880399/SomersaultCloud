@@ -5,6 +5,7 @@ import android.content.Context
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.core.view.ViewCompat
 import org.somersault.cloud.lib.R
@@ -156,6 +157,9 @@ class Cloud private constructor() : ICloud{
     private fun addViewToWindow(view:View){
         if(mContainer == null){
             return
+        }
+        if(view.parent != null){
+            (view.parent as ViewGroup).removeView(view)
         }
         mContainer?.addView(view)
     }

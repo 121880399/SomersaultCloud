@@ -4,12 +4,14 @@ import android.content.Context
 import android.content.res.Configuration
 import android.text.TextUtils
 import android.view.Gravity
+import android.view.KeyEvent
 import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.FrameLayout
 import org.somersault.cloud.lib.been.FvLastPositionInfo
 import org.somersault.cloud.lib.interf.IFloatView
 import org.somersault.cloud.lib.interf.OnTouchEventListener
+import org.somersault.cloud.lib.manager.ActivityManager
 import org.somersault.cloud.lib.manager.FloatViewManager
 import org.somersault.cloud.lib.utils.ScreenUtils
 import org.somersault.cloud.lib.widget.CloudFrameLayout
@@ -125,6 +127,23 @@ abstract class BaseFloatView : IFloatView, OnTouchEventListener {
                     return@OnTouchListener false
                 }
             })
+            //返回键拦截
+            mFloatView?.setOnKeyListener { v, keyCode, event ->
+                if(keyCode == KeyEvent.KEYCODE_BACK){
+                    val currentActivityFloatViews =
+                        FloatViewManager.instance.getCurrentActivityFloatViews(ActivityManager.instance.getTopActivity()!!)
+                    if(currentActivityFloatViews == null || currentActivityFloatViews.size == 0){
+                        return@setOnKeyListener false
+                    }
+                    currentActivityFloatViews.values.forEach {
+                     if(it.interceptBackKey()){
+                         return@setOnKeyListener it.onBackPressed()
+                     }
+                    }
+                    return@setOnKeyListener false
+                }
+                return@setOnKeyListener false
+            }
             //调用onViewCreated
             onViewCreated(mFloatView!!)
             mCustomLayoutParams = CustomLayoutParams()
