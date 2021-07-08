@@ -1,5 +1,6 @@
 package org.somersault.cloud.lib.ui
 
+import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
 import android.text.TextUtils
@@ -128,22 +129,22 @@ abstract class BaseFloatView : IFloatView, OnTouchEventListener {
                 }
             })
             //返回键拦截
-            mFloatView?.setOnKeyListener { v, keyCode, event ->
-                if(keyCode == KeyEvent.KEYCODE_BACK){
-                    val currentActivityFloatViews =
-                        FloatViewManager.instance.getCurrentActivityFloatViews(ActivityManager.instance.getTopActivity()!!)
-                    if(currentActivityFloatViews == null || currentActivityFloatViews.size == 0){
-                        return@setOnKeyListener false
-                    }
-                    currentActivityFloatViews.values.forEach {
-                     if(it.interceptBackKey()){
-                         return@setOnKeyListener it.onBackPressed()
-                     }
-                    }
-                    return@setOnKeyListener false
-                }
-                return@setOnKeyListener false
-            }
+//            mFloatView?.setOnKeyListener { v, keyCode, event ->
+//                if(keyCode == KeyEvent.KEYCODE_BACK){
+//                    val currentActivityFloatViews =
+//                        FloatViewManager.instance.getCurrentActivityFloatViews(ActivityManager.instance.getTopActivity()!!)
+//                    if(currentActivityFloatViews == null || currentActivityFloatViews.size == 0){
+//                        return@setOnKeyListener false
+//                    }
+//                    currentActivityFloatViews.values.forEach {
+//                     if(it.interceptBackKey()){
+//                         return@setOnKeyListener it.onBackPressed()
+//                     }
+//                    }
+//                    return@setOnKeyListener false
+//                }
+//                return@setOnKeyListener false
+//            }
             //调用onViewCreated
             onViewCreated(mFloatView!!)
             mCustomLayoutParams = CustomLayoutParams()
@@ -173,7 +174,7 @@ abstract class BaseFloatView : IFloatView, OnTouchEventListener {
         }
     }
 
-    override fun onResume() {
+    override fun onResume(activity:Activity) {
 
     }
 

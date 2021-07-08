@@ -89,7 +89,7 @@ class FloatViewManager private constructor() {
 
         //将所有已经打开的悬浮窗添加到新建的Activity上
         mFloatViews?.forEach {
-            attach(it.value)
+            attach(it.value,activity)
         }
 
     }
@@ -109,13 +109,13 @@ class FloatViewManager private constructor() {
      * 作者:ZhouZhengyi
      * 创建时间: 2021/6/30 8:45
      */
-    fun attach(floatView: BaseFloatView) {
+    fun attach(floatView: BaseFloatView,activity: Activity) {
         try {
             //如果悬浮窗不在map里面 说明是新添加的悬浮窗
             if (!mFloatViews!!.containsValue(floatView)) {
                 mFloatViews?.put(floatView.mTag, floatView)
             }
-            val currentActivity = ActivityManager.instance.getTopActivity()
+            val currentActivity = activity
             var currentActivityFloatViews: ArrayMap<String, BaseFloatView>
             if (mActivityFloatViews?.get(currentActivity) == null) {
                 //为空说明当前Activity还没有添加任何的悬浮窗
@@ -136,7 +136,7 @@ class FloatViewManager private constructor() {
             //将悬浮窗添加到当前Activity的根布局
             ActivityManager.instance.getRootView(currentActivity!!)?.addView(floatView.getFloatView())
             floatView.getFloatView()?.postDelayed(Runnable {
-                floatView.onResume()
+                floatView.onResume(activity)
             }, 100)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -164,6 +164,23 @@ class FloatViewManager private constructor() {
         view.onDestroy()
         //从当前Activity显示的悬浮窗集合中移除
         floatViews.remove(tag)
+    }
+
+    /**
+     * 移除Activity上的所有悬浮窗
+     * 作者:ZhouZhengyi
+     * 创建时间: 2021/7/8 9:45
+     */
+    fun detachActivityFloatViews(activity: Activity){
+        if(mActivityFloatViews == null){
+            return
+        }
+        val arrayMap = mActivityFloatViews!![activity]
+        arrayMap?.values?.forEach {
+            ActivityManager.instance.getRootView(activity)?.removeView(it.getFloatView())
+            it.onDestroy()
+        }
+        mActivityFloatViews?.remove(activity)
     }
 
 

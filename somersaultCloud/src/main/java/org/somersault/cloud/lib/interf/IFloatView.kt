@@ -1,5 +1,6 @@
 package org.somersault.cloud.lib.interf
 
+import android.app.Activity
 import android.content.Context
 import android.view.View
 import android.widget.FrameLayout
@@ -43,7 +44,7 @@ interface IFloatView {
      * 作者:ZhouZhengyi
      * 创建时间: 2021/6/28 8:35
      */
-    fun onResume()
+    fun onResume(activity:Activity)
 
     /**
      * 当Activity onPause时调用

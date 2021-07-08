@@ -55,12 +55,11 @@ class ActivityInspectionView: BaseFloatView() {
 
 
 
-    override fun onResume() {
-        super.onResume()
-        val topActivity = ActivityManager.instance.getTopActivity()
-        if(topActivity !=null) {
-            mBinding?.tvActivityName?.text = ResUtils.getString(R.string.sc_activity_inspection_activity_name,topActivity.javaClass.simpleName)
-            val visibleFragment = getVisibleFragment(topActivity)
+    override fun onResume(activity: Activity) {
+        super.onResume(activity)
+        if(activity !=null) {
+            mBinding?.tvActivityName?.text = ResUtils.getString(R.string.sc_activity_inspection_activity_name,activity.javaClass.simpleName)
+            val visibleFragment = getVisibleFragment(activity)
             if(!TextUtils.isEmpty(visibleFragment)){
                 mBinding?.tvFragmentName?.visibility = View.VISIBLE
                 mBinding?.tvFragmentName?.text = ResUtils.getString(R.string.sc_activity_inspection_fragment_name,visibleFragment)
@@ -72,7 +71,7 @@ class ActivityInspectionView: BaseFloatView() {
             mBinding?.tvRenderCost?.text = ResUtils.getString(R.string.sc_activity_inspection_render_cost,ActivityCostManager.instance.getRenderCost())
             mBinding?.tvOtherCost?.text = ResUtils.getString(R.string.sc_activity_inspection_other_cost,ActivityCostManager.instance.getOtherCost())
             mBinding?.tvTotalCost?.text = ResUtils.getString(R.string.sc_activity_inspection_total_cost,ActivityCostManager.instance.getTotalCost())
-            mBinding?.tvHierarchy?.text = ResUtils.getString(R.string.sc_activity_inspection_hierarchy,UiHierarchyManager.instance.getMaxHierarchy(topActivity))
+            mBinding?.tvHierarchy?.text = ResUtils.getString(R.string.sc_activity_inspection_hierarchy,UiHierarchyManager.instance.getMaxHierarchy(activity))
         }else{
             mBinding?.tvActivityName?.text = "获取不到当前Activity"
             mBinding?.tvFragmentName?.visibility = View.GONE

@@ -1,5 +1,6 @@
 package org.somersault.cloud.lib.plugin
 
+import android.util.Log
 import android.widget.Toast
 import org.somersault.cloud.lib.R
 import org.somersault.cloud.lib.interf.IFunctionPlugin
@@ -25,6 +26,7 @@ import org.somersault.cloud.lib.ui.activity.HandlerHooker
 class ActivityInspectionPlugin : IFunctionPlugin{
 
     companion object{
+        val TAG = ActivityInspectionView::class.simpleName
         var isOpen : Boolean = false
     }
 
@@ -41,16 +43,17 @@ class ActivityInspectionPlugin : IFunctionPlugin{
     override fun onClick() {
         val currentActivity = ActivityManager.instance.getTopActivity()!!
         if(isOpen){
+            Toast.makeText(currentActivity,"页面检测关闭!",Toast.LENGTH_LONG).show()
             FloatViewManager.instance.detach(ActivityInspectionView::class.java)
             view = null
             isOpen = false
         }else{
+            Toast.makeText(currentActivity,"页面检测打开!",Toast.LENGTH_LONG).show()
             HandlerHooker.doHook()
             view = ActivityInspectionView()
             view?.init(currentActivity)
-            FloatViewManager.instance.attach(view!!)
+            FloatViewManager.instance.attach(view!!,currentActivity)
             isOpen = true
-            Toast.makeText(currentActivity,"打开",Toast.LENGTH_LONG)
         }
         Cloud.instance.dismiss()
     }

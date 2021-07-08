@@ -90,7 +90,7 @@ class ActivityManager private constructor(): Application.ActivityLifecycleCallba
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
         createdActivityCount++
-       mActivityStack.push(activity)
+        mActivityStack.push(activity)
     }
 
     override fun onActivityStarted(activity: Activity) {
@@ -108,7 +108,9 @@ class ActivityManager private constructor(): Application.ActivityLifecycleCallba
     override fun onActivityStopped(activity: Activity) {
         startedActivityCount--
         Cloud.instance.detach(activity)
+        //先stop再detache 这个顺序不能变
         FloatViewManager.instance.onActivityStop(activity)
+        FloatViewManager.instance.detachActivityFloatViews(activity)
         if(startedActivityCount ==0 && !activity.isChangingConfigurations && !activity.isFinishing){
             //用户按home键切换到后台，startedActivityCount的数量一定为0
             //因为切换横竖屏也会走onStop方法，所以这里要判断是否是切换横竖屏
