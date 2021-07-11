@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.Application
 import android.os.Bundle
 import android.widget.FrameLayout
+import org.somersault.cloud.lib.been.Operation
 import org.somersault.cloud.lib.ui.Cloud
 import java.lang.Exception
 import java.util.*
@@ -100,6 +101,7 @@ class ActivityManager private constructor(): Application.ActivityLifecycleCallba
     }
 
     override fun onActivityResumed(activity: Activity) {
+        OperationPathManager.instance.addOperation(Operation(activity.javaClass.simpleName))
     }
 
     override fun onActivityPaused(activity: Activity) {
@@ -116,6 +118,7 @@ class ActivityManager private constructor(): Application.ActivityLifecycleCallba
             //因为切换横竖屏也会走onStop方法，所以这里要判断是否是切换横竖屏
             //因为结束一个Activity也要走onStop方法，所以这里要判断是否是结束Activity
             ActivityCostManager.instance.onBackground()
+            OperationPathManager.instance.addOperation(Operation("onBackground"))
         }
     }
 
@@ -129,6 +132,7 @@ class ActivityManager private constructor(): Application.ActivityLifecycleCallba
         if(createdActivityCount == 0 && !activity.isChangingConfigurations){
             //退出App时createdActivityCount一定为0
             //切换横竖屏也会走onDestory方法，所以这里要做判断
+            OperationPathManager.instance.addOperation(Operation("exit App"))
         }
     }
 

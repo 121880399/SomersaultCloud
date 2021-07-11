@@ -1,3 +1,4 @@
 rootProject.name = "SomersaultCloud"
 include ':app'
 include ':somersaultCloud'
+include ':view-click-plugin'

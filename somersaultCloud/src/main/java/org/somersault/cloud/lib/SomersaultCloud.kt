@@ -3,12 +3,14 @@ package org.somersault.cloud.lib
 import android.app.Activity
 import android.app.Application
 import me.weishu.reflection.Reflection
+import org.somersault.cloud.lib.been.Operation
 import org.somersault.cloud.lib.interf.IFunctionPlugin
 import org.somersault.cloud.lib.manager.FloatViewManager
 import org.somersault.cloud.lib.plugin.ActivityInspectionPlugin
 import org.somersault.cloud.lib.ui.Cloud
 import org.somersault.cloud.lib.utils.ApplicationUtils
 import org.somersault.cloud.lib.manager.ActivityManager
+import org.somersault.cloud.lib.manager.OperationPathManager
 
 /**
  * ================================================
@@ -47,6 +49,7 @@ class SomersaultCloud private constructor(){
         registerPlugin()
         //初始化功能悬浮窗管理器
         FloatViewManager.instance.init(app)
+        OperationPathManager.instance.addOperation(Operation("Application"))
     }
 
     private fun registerPlugin(){

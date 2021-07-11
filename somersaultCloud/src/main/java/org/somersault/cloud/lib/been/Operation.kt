@@ -8,21 +8,9 @@ package org.somersault.cloud.lib.been
  * 修订历史：
  * ================================================
  */
-class Operation {
+/**
+ * @param name Activity的名字或者点击事件
+ */
+class Operation(var name :String)
 
-    /**
-    * 本次操作是Activity切换
-     * 还是用户点击
-    * 作者: ZhouZhengyi
-    * 创建时间: 2021/7/10 8:27
-    */
-    var type : Int = 0
 
-    /**
-    * 记录本次操作的名称
-    * 作者: ZhouZhengyi
-    * 创建时间: 2021/7/10 8:27
-    */
-    var name : String = ""
-
-}
