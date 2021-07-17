@@ -1,18 +1,14 @@
-package org.somersault.cloud.lib.ui
+package org.somersault.cloud.lib.core
 
 import android.app.Activity
 import android.content.Context
-import android.content.res.Configuration
-import android.text.TextUtils
 import android.view.Gravity
-import android.view.KeyEvent
 import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.FrameLayout
 import org.somersault.cloud.lib.been.FvLastPositionInfo
 import org.somersault.cloud.lib.interf.IFloatView
 import org.somersault.cloud.lib.interf.OnTouchEventListener
-import org.somersault.cloud.lib.manager.ActivityManager
 import org.somersault.cloud.lib.manager.FloatViewManager
 import org.somersault.cloud.lib.utils.ScreenUtils
 import org.somersault.cloud.lib.widget.CloudFrameLayout

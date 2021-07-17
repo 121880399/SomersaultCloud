@@ -1,4 +1,4 @@
-package org.somersault.cloud.lib.ui
+package org.somersault.cloud.lib.core
 
 import android.view.LayoutInflater
 import android.view.View

@@ -1,6 +1,5 @@
-package org.somersault.cloud.lib.ui.activity;
+package org.somersault.cloud.lib.core.activity;
 
-import android.app.Application;
 import android.os.Handler;
 
 

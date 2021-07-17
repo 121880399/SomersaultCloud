@@ -9,7 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import org.somersault.cloud.lib.been.FvCurrentPositionInfo
 import org.somersault.cloud.lib.been.FvLastPositionInfo
-import org.somersault.cloud.lib.ui.BaseFloatView
+import org.somersault.cloud.lib.core.BaseFloatView
 import org.somersault.cloud.lib.utils.ScreenUtils
 import java.lang.Exception
 

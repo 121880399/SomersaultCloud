@@ -5,7 +5,7 @@ import android.app.Application
 import android.os.Bundle
 import android.widget.FrameLayout
 import org.somersault.cloud.lib.been.Operation
-import org.somersault.cloud.lib.ui.Cloud
+import org.somersault.cloud.lib.core.Cloud
 import java.lang.Exception
 import java.util.*
 

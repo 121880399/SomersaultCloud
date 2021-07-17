@@ -26,7 +26,7 @@ package org.somersault.cloud.lib.widget.floatview;
 
 import android.view.View;
 
-import org.somersault.cloud.lib.ui.Cloud;
+import org.somersault.cloud.lib.core.Cloud;
 
 
 public final class CloudCoordinator {

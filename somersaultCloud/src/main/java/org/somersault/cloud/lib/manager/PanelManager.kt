@@ -1,13 +1,12 @@
  package org.somersault.cloud.lib.manager
 
 import android.view.ViewGroup
-import org.somersault.cloud.lib.ui.Panel
+import org.somersault.cloud.lib.core.Panel
 import org.somersault.cloud.lib.utils.ScreenUtils
 import org.somersault.cloud.lib.widget.sheet.sweetpick.DimEffect
 import org.somersault.cloud.lib.widget.sheet.sweetpick.SweetSheet
-import org.somersault.cloud.lib.widget.sheet.widget.SweetView
 
-/**
+ /**
  * ================================================
  * 作    者：ZhouZhengyi
  * 创建日期：2021/6/24 8:35

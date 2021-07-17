@@ -1,4 +1,4 @@
-package org.somersault.cloud.lib.ui
+package org.somersault.cloud.lib.core
 
 import android.app.Activity
 import android.content.Context

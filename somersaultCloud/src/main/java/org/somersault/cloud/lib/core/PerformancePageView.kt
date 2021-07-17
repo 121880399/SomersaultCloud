@@ -1,4 +1,4 @@
-package org.somersault.cloud.lib.ui
+package org.somersault.cloud.lib.core
 
 import android.view.LayoutInflater
 import android.view.View
@@ -14,12 +14,12 @@ import org.somersault.cloud.lib.SomersaultCloud
 /**
  * ================================================
  * 作    者：ZhouZhengyi
- * 创建日期：2021/6/20 7:32
+ * 创建日期：2021/6/20 7:30
  * 描    述：
  * 修订历史：
  * ================================================
  */
-class AppInfoPageView : IPageView {
+class PerformancePageView : IPageView{
 
     private var mBinding : ScLayoutFunctionBinding? = null
 
@@ -29,19 +29,19 @@ class AppInfoPageView : IPageView {
 
     override fun onCreateView(container: ViewGroup): View {
         if(mBinding == null){
-            mBinding = ScLayoutFunctionBinding.inflate(LayoutInflater.from(container.context),container,false)
-            onViewCreate(mBinding!!.root)
+            mBinding = ScLayoutFunctionBinding.inflate(LayoutInflater.from(container.context),null,false)
+            onViewCreate(mBinding!!.rvFunction)
         }
         return mBinding!!.root
     }
 
     private fun onViewCreate(view : View){
-        mPlugins = SomersaultCloud.instance.getAppInfoPlugins()
-        mBinding!!.tvTitle.text = "App信息"
+        mPlugins = SomersaultCloud.instance.getPerformancePlugins()
         if(mPlugins == null || mPlugins!!.isEmpty()){
             // TODO: 2021/6/20 显示空页面
             return
         }
+        mBinding!!.tvTitle.text = "性能监控"
         mBinding!!.rvFunction.layoutManager = GridLayoutManager(view.context,3)
         mBinding!!.rvFunction.setHasFixedSize(true)
         mAdapter = PluginRvAdapter(mPlugins!!)

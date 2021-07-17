@@ -1,4 +1,4 @@
-package org.somersault.cloud.lib.ui.activity
+package org.somersault.cloud.lib.core.activity
 
 import android.app.Activity
 import android.content.Context
@@ -13,11 +13,10 @@ import org.somersault.cloud.lib.databinding.ScViewActivityInspectionBinding
 import org.somersault.cloud.lib.manager.ActivityCostManager
 import org.somersault.cloud.lib.manager.FloatViewManager
 import org.somersault.cloud.lib.plugin.ActivityInspectionPlugin
-import org.somersault.cloud.lib.ui.BaseFloatView
+import org.somersault.cloud.lib.core.BaseFloatView
 import org.somersault.cloud.lib.utils.ResUtils
 import org.somersault.cloud.lib.utils.ScreenUtils
 import org.somersault.cloud.lib.widget.CustomLayoutParams
-import org.somersault.cloud.lib.manager.ActivityManager
 import org.somersault.cloud.lib.manager.UiHierarchyManager
 
 /**

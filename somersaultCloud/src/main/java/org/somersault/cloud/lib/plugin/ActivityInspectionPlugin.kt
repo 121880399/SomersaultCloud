@@ -1,14 +1,13 @@
 package org.somersault.cloud.lib.plugin
 
-import android.util.Log
 import android.widget.Toast
 import org.somersault.cloud.lib.R
 import org.somersault.cloud.lib.interf.IFunctionPlugin
 import org.somersault.cloud.lib.manager.FloatViewManager
-import org.somersault.cloud.lib.ui.activity.ActivityInspectionView
+import org.somersault.cloud.lib.core.activity.ActivityInspectionView
 import org.somersault.cloud.lib.manager.ActivityManager
-import org.somersault.cloud.lib.ui.Cloud
-import org.somersault.cloud.lib.ui.activity.HandlerHooker
+import org.somersault.cloud.lib.core.Cloud
+import org.somersault.cloud.lib.core.activity.HandlerHooker
 
 /**
  * ================================================

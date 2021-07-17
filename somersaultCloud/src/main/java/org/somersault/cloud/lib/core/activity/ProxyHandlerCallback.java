@@ -1,4 +1,4 @@
-package org.somersault.cloud.lib.ui.activity;
+package org.somersault.cloud.lib.core.activity;
 
 import android.os.Handler;
 import android.os.Message;

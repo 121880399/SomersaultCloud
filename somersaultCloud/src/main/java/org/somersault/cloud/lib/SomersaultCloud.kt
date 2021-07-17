@@ -7,7 +7,7 @@ import org.somersault.cloud.lib.been.Operation
 import org.somersault.cloud.lib.interf.IFunctionPlugin
 import org.somersault.cloud.lib.manager.FloatViewManager
 import org.somersault.cloud.lib.plugin.ActivityInspectionPlugin
-import org.somersault.cloud.lib.ui.Cloud
+import org.somersault.cloud.lib.core.Cloud
 import org.somersault.cloud.lib.utils.ApplicationUtils
 import org.somersault.cloud.lib.manager.ActivityManager
 import org.somersault.cloud.lib.manager.OperationPathManager

@@ -1,18 +1,15 @@
-package org.somersault.cloud.lib.ui
+package org.somersault.cloud.lib.core
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
-import androidx.core.view.isNotEmpty
 import androidx.viewpager.widget.ViewPager
-import org.somersault.cloud.lib.R
 import org.somersault.cloud.lib.adapter.CommonPagerAdapter
 import org.somersault.cloud.lib.databinding.ScLayoutVpSweetBinding
 import org.somersault.cloud.lib.interf.IPageView
 import org.somersault.cloud.lib.widget.sheet.sweetpick.Delegate
 import org.somersault.cloud.lib.widget.sheet.sweetpick.SweetSheet
-import org.somersault.cloud.lib.widget.sheet.widget.FreeGrowUpParentRelativeLayout
 import org.somersault.cloud.lib.widget.sheet.widget.SweetView
 
 /**
