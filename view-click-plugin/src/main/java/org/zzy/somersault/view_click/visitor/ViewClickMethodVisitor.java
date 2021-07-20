@@ -122,6 +122,9 @@ public class ViewClickMethodVisitor extends AdviceAdapter {
     @Override
     public void visitEnd() {
         super.visitEnd();
+        if(isHasTracked){
+
+        }
         if (mLambdaMethodCells.containsKey(nameDesc)) {
             mLambdaMethodCells.remove(nameDesc);
         }
