@@ -3,13 +3,14 @@ package org.somersault.cloud.lib.core.activity
 import android.app.Activity
 import android.content.DialogInterface
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.MenuItem
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ExpandableListView
-import android.widget.RadioGroup
+import android.view.ViewGroup
+import android.widget.*
 import org.somersault.cloud.lib.been.Operation
 import org.somersault.cloud.lib.manager.OperationPathManager
+import org.somersault.cloud.lib.utils.AopUtils
 
 /**
  * ================================================
@@ -145,25 +146,44 @@ class ViewClickTrackHelper {
 
 
 
-
+    /**
+     * 点击onGroupClick方法时Hook
+     * 作者:ZhouZhengyi
+     * 创建时间: 2021/7/21 8:19
+     */
     fun trackExpandableListViewOnGroupClick(
         expandableListView: ExpandableListView?, view: View?,
         groupPosition: Int
     ) {
-
+        addOperation("onGroupClick",view!!)
     }
 
+    /**
+     * 点击onChildClick方法时Hook
+     * 作者:ZhouZhengyi
+     * 创建时间: 2021/7/21 8:36
+     */
     fun trackExpandableListViewOnChildClick(
         expandableListView: ExpandableListView?, view: View?,
         groupPosition: Int, childPosition: Int
     ) {
-
+        addOperation("onChildClick",view!!)
     }
 
+    /**
+     * onTabChanged时hook
+     * 作者:ZhouZhengyi
+     * 创建时间: 2021/7/21 8:43
+     */
     fun trackTabHost(tabName: String?) {
-
+        addOnClickOperation(tabName!!)
     }
 
+    /**
+     * onTabSelected时hook
+     * 作者:ZhouZhengyi
+     * 创建时间: 2021/7/21 8:44
+     */
     fun trackTabLayoutSelected(`object`: Any, tab: Any?) {
 
     }
@@ -184,8 +204,60 @@ class ViewClickTrackHelper {
 
     }
 
+    /**
+     * onItemClick时Hook
+     * ListView,GridView,Spinner的onItemClick
+     * 都会走这个方法
+     * 作者:ZhouZhengyi
+     * 创建时间: 2021/7/21 9:17
+     */
     fun trackListView(adapterView: AdapterView<*>, view: View?, position: Int) {
+        try{
+            if(view == null){
+                return
+            }
+            //获取所在的 Context
+            val context = view.context ?: return
+            val operationBuilder = StringBuilder()
+            when (view) {
+                is ListView -> {
+                    operationBuilder.append("ListView")
+                }
+                is GridView -> {
+                    operationBuilder.append("GridView")
+                }
+                is Spinner -> {
+                    operationBuilder.append("Spinner")
+                }
+            }
+            val viewId = AopUtils.getViewId(view)
+            if(!TextUtils.isEmpty(viewId)){
+                operationBuilder.append(":$viewId")
+            }
 
+            var viewText: String? = null
+            if (view is ViewGroup) {
+                try {
+                    val stringBuilder = StringBuilder()
+                    viewText = AopUtils.traverseView(stringBuilder, view as ViewGroup?)
+                    if (!TextUtils.isEmpty(viewText)) {
+                        viewText = viewText.substring(0, viewText.length - 1)
+                    }
+                } catch (e: java.lang.Exception) {
+                   e.printStackTrace()
+                }
+            } else {
+                viewText = AopUtils.getViewText(view)
+            }
+
+            if(!TextUtils.isEmpty(viewText)){
+                operationBuilder.append(":$viewText")
+            }
+            val operation = Operation(operationBuilder.toString())
+            OperationPathManager.instance.addOperation(operation)
+        }catch (e:java.lang.Exception){
+            e.printStackTrace()
+        }
     }
 
     fun trackDrawerOpened(view: View?) {
@@ -270,6 +342,17 @@ class ViewClickTrackHelper {
 
     fun addWebViewVisualInterface(webView: View?) {
 
+    }
+
+    private fun addOperation(name:String,view: View){
+        val resourceEntryName = view?.resources?.getResourceEntryName(view!!.id)
+        val operation = Operation("$resourceEntryName:$name")
+        OperationPathManager.instance.addOperation(operation)
+    }
+
+    private fun addOnClickOperation(name:String){
+        val operation = Operation("$name:onClick")
+        OperationPathManager.instance.addOperation(operation)
     }
 
 }
