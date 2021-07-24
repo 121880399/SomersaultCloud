@@ -268,13 +268,23 @@ class ViewClickTrackHelper {
 
     }
 
+    /**
+     *
+     * 作者:ZhouZhengyi
+     * 创建时间: 2021/7/22 9:15
+     */
     fun trackViewOnClick(view: View?) {
-
+        if(view == null){
+            return
+        }
+        val viewId = AopUtils.getViewId(view)
+        val viewText = AopUtils.getViewText(view)
+        if(!TextUtils.isEmpty(viewText)){
+            val operation = Operation("$viewText:($viewId):OnClick()")
+            OperationPathManager.instance.addOperation(operation)
+        }
     }
 
-    fun trackViewOnClick(view: View?, isFromUser: Boolean) {
-
-    }
 
     fun track(eventName: String?, properties: String?) {
 
@@ -351,7 +361,7 @@ class ViewClickTrackHelper {
     }
 
     private fun addOnClickOperation(name:String){
-        val operation = Operation("$name:onClick")
+        val operation = Operation("$name:onClick()")
         OperationPathManager.instance.addOperation(operation)
     }
 
