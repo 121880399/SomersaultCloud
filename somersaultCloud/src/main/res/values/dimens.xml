@@ -5,4 +5,5 @@
     <dimen name="indicator_padding">2dp</dimen>
     <dimen name="arc_max_height">50dp</dimen>
     <dimen name="sheet_height">290dp</dimen>
+    <dimen name="sc_setting_item_def_height">48dp</dimen>
 </resources>

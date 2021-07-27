@@ -10,4 +10,8 @@
     <color name="sc_slider_color">#ff969696</color>
     <color name="sc_activity_inspection_background_stroke">#CCCCCC</color>
     <color name="sc_default_text_color_1e242a">#1E242A</color>
+    <color name="sc_setting_item_content">#353535</color>
+    <color name="sc_setting_item_value">#666666</color>
+    <color name="sc_main_theme_color">#7100FF</color>
+    <color name="sc_setting_item_divider">#E9ECEE</color>
 </resources>
