@@ -1,7 +1,6 @@
-package org.somersault.cloud.lib.core.tracemethod
+package org.somersault.cloud.lib.core.slowmethod
 
 import android.os.Bundle
-import android.os.PersistableBundle
 import androidx.appcompat.app.AppCompatActivity
 import org.somersault.cloud.lib.R
 
@@ -13,7 +12,7 @@ import org.somersault.cloud.lib.R
  * 修订历史：
  * ================================================
  */
-class TraceMethodActivity: AppCompatActivity() {
+class SlowMethodActivity: AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

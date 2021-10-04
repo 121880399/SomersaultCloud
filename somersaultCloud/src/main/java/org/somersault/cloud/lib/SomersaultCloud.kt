@@ -11,7 +11,7 @@ import org.somersault.cloud.lib.core.Cloud
 import org.somersault.cloud.lib.utils.ApplicationUtils
 import org.somersault.cloud.lib.manager.ActivityManager
 import org.somersault.cloud.lib.manager.OperationPathManager
-import org.somersault.cloud.lib.plugin.TraceMethodPlugin
+import org.somersault.cloud.lib.plugin.SlowMethodPlugin
 
 /**
  * ================================================
@@ -56,7 +56,7 @@ class SomersaultCloud private constructor(){
     private fun registerPlugin(){
         //注册性能检测插件
         performanceList.add(ActivityInspectionPlugin())
-        performanceList.add(TraceMethodPlugin())
+        performanceList.add(SlowMethodPlugin())
         //注册ui检查插件
         //注册App信息插件
     }

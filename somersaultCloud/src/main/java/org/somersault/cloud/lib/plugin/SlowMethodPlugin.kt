@@ -2,7 +2,7 @@ package org.somersault.cloud.lib.plugin
 
 import android.content.Intent
 import org.somersault.cloud.lib.R
-import org.somersault.cloud.lib.core.tracemethod.TraceMethodActivity
+import org.somersault.cloud.lib.core.slowmethod.SlowMethodActivity
 import org.somersault.cloud.lib.interf.IFunctionPlugin
 import org.somersault.cloud.lib.manager.ActivityManager
 
@@ -14,7 +14,7 @@ import org.somersault.cloud.lib.manager.ActivityManager
  * 修订历史：
  * ================================================
  */
-class TraceMethodPlugin :IFunctionPlugin {
+class SlowMethodPlugin :IFunctionPlugin {
 
     override fun getIconResId(): Int {
        return R.mipmap.sc_ic_trace_method
@@ -27,7 +27,7 @@ class TraceMethodPlugin :IFunctionPlugin {
     override fun onClick() {
         val currentActivity = ActivityManager.instance.getTopActivity()!!
         val intent = Intent()
-        intent.setClass(currentActivity,TraceMethodActivity::class.java)
+        intent.setClass(currentActivity,SlowMethodActivity::class.java)
         currentActivity.startActivity(intent)
     }
 }
