@@ -35,7 +35,10 @@ public class ViewClickClassVisitor extends BaseClassVisitor {
      */
     private String superClass;
 
-    private HashSet<String> visitedFragMethods = new HashSet<>();// 无需判空
+    /**
+     * 使用HashSet无需判空
+     */
+    private HashSet<String> visitedFragMethods = new HashSet<>();
 
     private String className;
 

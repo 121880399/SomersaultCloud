@@ -19,4 +19,15 @@ class SlowMethodClassVisitor : BaseClassVisitor {
     constructor(extension: SlowMethodExtension){
         this.mExtension = extension
     }
+
+    override fun visit(
+        version: Int,
+        access: Int,
+        name: String?,
+        signature: String?,
+        superName: String?,
+        interfaces: Array<out String>?
+    ) {
+        super.visit(version, access, name, signature, superName, interfaces)
+    }
 }
