@@ -48,6 +48,13 @@ class SlowMethodExtension : BaseExtension() {
     var packageName : MutableSet<String> = mutableSetOf()
 
     /**
+     * 是否是Release环境
+     * 作者:ZhouZhengyi
+     * 创建时间: 2021/11/24 10:06
+     */
+    var isRelease = false
+
+    /**
      * 在build.gradle中使用的Extension名称
      * 作者:ZhouZhengyi
      * 创建时间: 2021/11/23 9:47

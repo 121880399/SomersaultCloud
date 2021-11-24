@@ -2,6 +2,7 @@ package org.zzy.slow_method.visitor
 
 import com.ss.android.ugc.bytex.common.visitor.BaseClassVisitor
 import org.objectweb.asm.ClassVisitor
+import org.objectweb.asm.MethodVisitor
 import org.zzy.slow_method.SlowMethodExtension
 
 /**
@@ -20,14 +21,13 @@ class SlowMethodClassVisitor : BaseClassVisitor {
         this.mExtension = extension
     }
 
-    override fun visit(
-        version: Int,
+    override fun visitMethod(
         access: Int,
         name: String?,
+        descriptor: String?,
         signature: String?,
-        superName: String?,
-        interfaces: Array<out String>?
-    ) {
-        super.visit(version, access, name, signature, superName, interfaces)
+        exceptions: Array<out String>?
+    ): MethodVisitor {
+        return super.visitMethod(access, name, descriptor, signature, exceptions)
     }
 }

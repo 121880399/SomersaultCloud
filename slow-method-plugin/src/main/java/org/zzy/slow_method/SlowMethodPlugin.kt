@@ -19,6 +19,7 @@ class SlowMethodPlugin : CommonPlugin<SlowMethodExtension, SlowMethodContext>() 
         super.onApply(project)
         when{
             project.plugins.hasPlugin("com.android.application") || project.plugins.hasPlugin("com.android.dynamic-feature") ->{
+                extension.isRelease = isReleaseTask(project)
                 //不是Relase环境才进行以下操作
                 if(!isReleaseTask(project)){
                     project.getAndroid<AppExtension>().let{androidExt->
