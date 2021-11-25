@@ -44,8 +44,15 @@ class SlowMethodPlugin : CommonPlugin<SlowMethodExtension, SlowMethodContext>() 
      * 创建时间: 2021/11/23 9:17
      */
     override fun transform(relativePath:String, chain: ClassVisitorChain): Boolean {
-        //这里注册我们的ClassVisitor
-        chain.connect(SlowMethodClassVisitor(extension))
+        if(!extension.isRelease
+            && extension.slow_method_switch
+            && extension.somersaultcloud_plugin_switch
+            ){
+                if (extension.packageName.any {relativePath.startsWith(it,true) }){
+                    //这里注册我们的ClassVisitor
+                    chain.connect(SlowMethodClassVisitor(extension))
+                }
+        }
         return super.transform(relativePath, chain)
     }
 
