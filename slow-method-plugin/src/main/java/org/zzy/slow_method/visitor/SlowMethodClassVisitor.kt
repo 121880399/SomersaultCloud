@@ -15,7 +15,7 @@ import org.zzy.slow_method.SlowMethodExtension
  */
 class SlowMethodClassVisitor : BaseClassVisitor {
 
-    var mExtension : SlowMethodExtension
+    private var mExtension : SlowMethodExtension
 
     constructor(extension: SlowMethodExtension){
         this.mExtension = extension
@@ -28,6 +28,7 @@ class SlowMethodClassVisitor : BaseClassVisitor {
         signature: String?,
         exceptions: Array<out String>?
     ): MethodVisitor {
-        return super.visitMethod(access, name, descriptor, signature, exceptions)
+        val visitMethod = super.visitMethod(access, name, descriptor, signature, exceptions)
+        return SlowMethodVisitor(visitMethod,mExtension)
     }
 }
