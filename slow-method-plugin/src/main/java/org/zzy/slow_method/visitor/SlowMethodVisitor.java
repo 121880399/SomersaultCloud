@@ -21,5 +21,14 @@ public class SlowMethodVisitor extends MethodVisitor {
         this.methodExtension = methodExtension;
     }
 
-
+    /**
+     * 开始访问方法
+     * 在方法入口处插入方法开始的时间
+     * 作者:ZhouZhengyi
+     * 创建时间: 2021/11/27 11:21
+     */
+    @Override
+    public void visitCode() {
+        super.visitCode();
+    }
 }
