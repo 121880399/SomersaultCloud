@@ -1,6 +1,7 @@
 package org.somersault.cloud.lib.aop.slow_method
 
 import android.os.SystemClock
+import android.util.Log
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -12,16 +13,20 @@ import java.util.concurrent.ConcurrentHashMap
  * ================================================
  */
 class SlowMethodHook {
+    companion object {
+        private const val TAG = "SLOW_METHOD"
+    }
 
-    private val METHOD_COSTS : ConcurrentHashMap<String,Long?> by lazy { ConcurrentHashMap<String,Long?>() }
+
+    private val methodCosts: ConcurrentHashMap<String, Long?> by lazy { ConcurrentHashMap<String, Long?>() }
 
     /**
      * 每个方法开始时记录开始的时间
      * 作者:ZhouZhengyi
      * 创建时间: 2021/11/30 11:51
      */
-    fun methodCostStart(methodName:String){
-       METHOD_COSTS[methodName] = SystemClock.elapsedRealtime()
+    fun methodCostStart(methodName: String) {
+        methodCosts[methodName] = SystemClock.elapsedRealtime()
     }
 
     /**
@@ -32,7 +37,19 @@ class SlowMethodHook {
      * 作者:ZhouZhengyi
      * 创建时间: 2021/11/30 11:53
      */
-    fun methodCostEnd(methodName: String,thresholdTime: Int){
+    fun methodCostEnd(methodName: String, thresholdTime: Int) {
+        if (methodCosts.containsKey(methodName)) {
+            //1.得到方法执行耗时
+            val startTime = methodCosts[methodName]!!
+            val endTime = SystemClock.elapsedRealtime()
+            val cost = (endTime - startTime).toInt()
+            val threadName = Thread.currentThread().name
+            //2.如果方法执行时间超过了阈值，则打印出来
+            if (cost >= thresholdTime) {
+                Log.i(TAG,"========================SomersaultCloud========================")
+                Log.i(TAG,"\t $methodName($cost)-$threadName-threshold value($thresholdTime)")
+            }
 
+        }
     }
 }
