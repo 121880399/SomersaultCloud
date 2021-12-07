@@ -2,6 +2,8 @@ package org.somersault.cloud.lib.aop.slow_method
 
 import android.os.SystemClock
 import android.util.Log
+import java.lang.Exception
+import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -18,15 +20,44 @@ class SlowMethodHook {
     }
 
 
-    private val methodCosts: ConcurrentHashMap<String, Long?> by lazy { ConcurrentHashMap<String, Long?>() }
+    private val methodStacks : MutableList<ConcurrentHashMap<String,MethodInvokeNode>> by lazy {
+        Collections.synchronizedList(mutableListOf<ConcurrentHashMap<String,MethodInvokeNode>>())
+    }
 
     /**
-     * 每个方法开始时记录开始的时间
+     * 每个方法开始时创建队列
+     * @param className类名
+     * @param methodName方法名
+     * @param desc 方法描述
+     * @param currentLevel 当前方法层级
+     * @param thresholdTime 耗时阈值
+     * @param totalLevel 需要输出的方法总层级
      * 作者:ZhouZhengyi
      * 创建时间: 2021/11/30 11:51
      */
-    fun methodCostStart(methodName: String) {
-        methodCosts[methodName] = SystemClock.elapsedRealtime()
+    fun methodCostStart(className:String,methodName: String,desc:String,currentLevel:Int,thresholdTime: Int,totalLevel:Int) {
+        try {
+            createMethodStack(totalLevel)
+            val methodNode = MethodInvokeNode()
+            methodNode.className = className
+            methodNode.methodName = methodName
+            methodNode.startTime = System.currentTimeMillis()
+            methodNode.currentThreadName = Thread.currentThread().name
+            methodNode.level = currentLevel
+            methodStacks[currentLevel][String.format("%s_%s", className, methodName)] = methodNode
+        }catch (e: Exception){
+            e.printStackTrace()
+        }
+    }
+
+    private fun createMethodStack(totalLevel: Int){
+        if(methodStacks.size == totalLevel){
+            return
+        }
+        methodStacks.clear()
+        for(i in 0 until totalLevel){
+            methodStacks.add(i, ConcurrentHashMap())
+        }
     }
 
     /**
@@ -38,18 +69,6 @@ class SlowMethodHook {
      * 创建时间: 2021/11/30 11:53
      */
     fun methodCostEnd(methodName: String, thresholdTime: Int) {
-        if (methodCosts.containsKey(methodName)) {
-            //1.得到方法执行耗时
-            val startTime = methodCosts[methodName]!!
-            val endTime = SystemClock.elapsedRealtime()
-            val cost = (endTime - startTime).toInt()
-            val threadName = Thread.currentThread().name
-            //2.如果方法执行时间超过了阈值，则打印出来
-            if (cost >= thresholdTime) {
-                Log.i(TAG,"========================SomersaultCloud========================")
-                Log.i(TAG,"\t $methodName($cost)-$threadName-threshold value($thresholdTime)")
-            }
 
-        }
     }
 }
