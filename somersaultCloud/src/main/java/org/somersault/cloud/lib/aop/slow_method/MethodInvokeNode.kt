@@ -28,7 +28,7 @@ class MethodInvokeNode {
     //方法执行完毕的时间ms
     var endTime:Long = 0
     //方法执行耗时ms
-    var costTime:Long = 0
+    var costTime  = 0
 
 
 }

@@ -26,8 +26,9 @@ class SlowMethodHook {
 
     /**
      * 每个方法开始时创建队列
-     * @param className类名
-     * @param methodName方法名
+     * 构建方法对应的Node类
+     * @param className 类名
+     * @param methodName 方法名
      * @param desc 方法描述
      * @param currentLevel 当前方法层级
      * @param thresholdTime 耗时阈值
@@ -35,7 +36,7 @@ class SlowMethodHook {
      * 作者:ZhouZhengyi
      * 创建时间: 2021/11/30 11:51
      */
-    fun methodCostStart(className:String,methodName: String,desc:String,currentLevel:Int,thresholdTime: Int,totalLevel:Int) {
+    fun methodCostStart(className:String,methodName: String,currentLevel:Int,totalLevel:Int) {
         try {
             createMethodStack(totalLevel)
             val methodNode = MethodInvokeNode()
@@ -68,7 +69,28 @@ class SlowMethodHook {
      * 作者:ZhouZhengyi
      * 创建时间: 2021/11/30 11:53
      */
-    fun methodCostEnd(methodName: String, thresholdTime: Int) {
+    fun methodCostEnd(className:String,methodName: String, currentLevel: Int,thresholdTime: Int) {
+        try {
+            val methodNode = methodStacks[currentLevel][String.format("%s_%s",className,methodName)]
+            if(methodNode!=null){
+                methodNode.endTime = System.currentTimeMillis()
+                methodNode.costTime = (methodNode.endTime - methodNode.startTime).toInt()
+                bindNode(currentLevel,methodNode,thresholdTime)
+            }
+
+            if(currentLevel == 0){
+
+            }
+        }catch (e :Exception){
+            e.printStackTrace()
+        }
+    }
+
+    private fun bindNode(currentLevel: Int,methodNode : MethodInvokeNode,thresholdTime: Int){
+        if(methodNode == null){
+            return
+        }
+
 
     }
 }
