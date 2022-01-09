@@ -14,7 +14,7 @@ class MethodInvokeNode {
     //父节点
     var parentNode:MethodInvokeNode ?= null
     //在该方法中调用的其他方法，抽象为孩子节点
-    private var childrenNode:MutableList<MethodInvokeNode> = mutableListOf()
+    var childrenNode:MutableList<MethodInvokeNode> = mutableListOf()
     //方法所在的类
     var className:String ?= null
     //方法名
@@ -29,14 +29,5 @@ class MethodInvokeNode {
     var endTime:Long = 0
     //方法执行耗时ms
     var costTime  = 0
-
-    /**
-     * 添加孩子节点
-     * 作者:ZhouZhengyi
-     * 创建时间: 2021/12/10 9:05
-     */
-    fun addChildrenNode(methodNode : MethodInvokeNode){
-        childrenNode.add(methodNode)
-    }
 
 }
