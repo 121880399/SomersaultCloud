@@ -24,15 +24,15 @@
         android:layout_marginTop="3dp"
         android:layout_below="@id/tv_activity_name"
         />
+
     <TextView
         android:id="@+id/tv_hierarchy"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="布局层级:9"
+        android:layout_below="@id/tv_fragment_name"
         android:layout_marginTop="3dp"
         android:textSize="14sp"
-        android:layout_below="@id/tv_fragment_name"
-        />
+        tools:text="布局层级:9" />
     <TextView
         android:id="@+id/tv_total_cost"
         android:layout_width="match_parent"
@@ -78,11 +78,11 @@
         android:textSize="14sp"
         android:layout_below="@id/tv_render_cost"
         />
+
     <ImageView
         android:id="@+id/iv_close"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:src="@drawable/sc_ic_close"
         android:layout_alignParentRight="true"
-        />
+        android:src="@drawable/sc_ic_close" />
 </RelativeLayout>

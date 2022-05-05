@@ -8,4 +8,12 @@
     <string name="sc_activity_inspection_other_cost">Other cost:%dms</string>
     <string name="sc_activity_inspection_total_cost">总耗时:%dms</string>
     <string name="sc_activity_inspection_hierarchy">布局层级:%d</string>
+    <string-array name="logcat_level">
+        <item>Verbose</item>
+        <item>Debug</item>
+        <item>Info</item>
+        <item>Warning</item>
+        <item>Error</item>
+        <item>Assert</item>
+    </string-array>
 </resources>
