@@ -10,19 +10,14 @@ import android.text.style.BackgroundColorSpan
 import android.text.style.ForegroundColorSpan
 import android.text.style.UnderlineSpan
 import android.util.SparseIntArray
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.BaseAdapter
-import android.widget.ExpandableListView
-import android.widget.HorizontalScrollView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import org.somersault.cloud.lib.R
 import org.somersault.cloud.lib.utils.ScreenUtils
-import java.util.*
+import org.somersault.cloud.lib.widget.ClickableHorizontalScrollView
 import java.util.regex.Pattern
-import kotlin.collections.ArrayList
 
 /**
  * ================================================
@@ -62,12 +57,7 @@ class LogcatAdapter(context: Context) : RecyclerView.Adapter<LogcatAdapter.ViewH
     * 创建时间: 2022/5/1 11:12
     */
     var mItemLongClickListener : OnItemLongClickListener ? = null
-    /**
-    * 存储滑动的X坐标
-    * 作者: ZhouZhengyi
-    * 创建时间: 2022/5/1 11:28
-    */
-    private val mScrollXSet : SparseIntArray = SparseIntArray()
+
     /**
     * 搜索关键字
     * 作者: ZhouZhengyi
@@ -229,9 +219,9 @@ class LogcatAdapter(context: Context) : RecyclerView.Adapter<LogcatAdapter.ViewH
 
 
 
-     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener, View.OnTouchListener,
+     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener,
         View.OnLongClickListener {
-        private var mLogContentSv : HorizontalScrollView ? = null
+        private var mLogContentSv : ClickableHorizontalScrollView ? = null
         private var mContentTv : TextView? = null
         private var mDividerView : View ? = null
 
@@ -242,35 +232,10 @@ class LogcatAdapter(context: Context) : RecyclerView.Adapter<LogcatAdapter.ViewH
 
             itemView.setOnClickListener(this)
             itemView.setOnLongClickListener(this)
-
-            mLogContentSv!!.setOnTouchListener(this)
         }
 
         override fun onClick(v: View?) {
             mItemClickListener?.onItemClick(getItem(layoutPosition),layoutPosition)
-        }
-
-        override fun onTouch(v: View?, event: MotionEvent?): Boolean {
-           when(event!!.action){
-               MotionEvent.ACTION_MOVE -> {
-                   //修改动作为ACTION_CANCEL
-                   event.action = MotionEvent.ACTION_CANCEL
-                   //将事件回传给父控件
-                   itemView.onTouchEvent(event)
-                   //父控件响应后恢复事件原动作
-                   event.action = MotionEvent.ACTION_MOVE
-               }
-               MotionEvent.ACTION_UP,MotionEvent.ACTION_CANCEL ->{
-                   var info = getItem(layoutPosition) as LogcatInfo
-                   var scrollX = mLogContentSv!!.scrollX
-                   mScrollXSet.put(info.hashCode(),scrollX)
-                   itemView.onTouchEvent(event)
-               }
-               else->{
-                   itemView.onTouchEvent(event)
-               }
-           }
-            return false
         }
 
         override fun onLongClick(v: View?): Boolean {
@@ -376,12 +341,10 @@ class LogcatAdapter(context: Context) : RecyclerView.Adapter<LogcatAdapter.ViewH
             if(layoutPosition < 0 || layoutPosition >= itemCount ){
                 return@Runnable
             }
-            var info = getItem(layoutPosition)
-            var scrollX = mScrollXSet.get(info.hashCode())
-            if(mLogContentSv!!.scrollX == scrollX){
+            if(mLogContentSv!!.scrollX == mLogContentSv!!.mLastScrollX){
                 return@Runnable
             }
-             mLogContentSv!!.scrollTo(scrollX,0)
+             mLogContentSv!!.scrollTo(mLogContentSv!!.mLastScrollX,0)
          }
 
          /**
@@ -399,7 +362,7 @@ class LogcatAdapter(context: Context) : RecyclerView.Adapter<LogcatAdapter.ViewH
          * 创建时间: 2022/5/2 10:37
          */
          fun onRecycled(){
-           mLogContentSv.removeCallbacks(mScrollRunnable)
+           mLogContentSv!!.removeCallbacks(mScrollRunnable)
          }
 
     }
