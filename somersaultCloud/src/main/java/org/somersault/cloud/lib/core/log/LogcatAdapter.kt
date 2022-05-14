@@ -10,11 +10,13 @@ import android.text.style.BackgroundColorSpan
 import android.text.style.ForegroundColorSpan
 import android.text.style.UnderlineSpan
 import android.util.SparseIntArray
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import org.somersault.cloud.lib.R
+import org.somersault.cloud.lib.databinding.ScItemLogcatBinding
 import org.somersault.cloud.lib.utils.ScreenUtils
 import org.somersault.cloud.lib.widget.ClickableHorizontalScrollView
 import java.util.regex.Pattern
@@ -80,6 +82,13 @@ class LogcatAdapter(context: Context) : RecyclerView.Adapter<LogcatAdapter.ViewH
     */
     private val ERROR_CODE_REGEX = Pattern.compile("\\(\\w+\\.\\w+:\\d+\\)")
 
+    /**
+    * 标记是否正在进行清除操作，如果正在清除，则不添加数据
+    * 作者: ZhouZhengyi
+    * 创建时间: 2022/5/14 19:12
+    */
+    private @Volatile var mCleaning = false
+
     private var mContext : Context? = null
 
     init {
@@ -104,12 +113,54 @@ class LogcatAdapter(context: Context) : RecyclerView.Adapter<LogcatAdapter.ViewH
         private val LOG_REMOVE_COUNT = LOG_MAX_COUNT / 5
     }
 
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val inflate = ScItemLogcatBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ViewHolder(inflate.root)
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.onBindView(getItem(position),position)
+    }
+
+    override fun getItemCount(): Int {
+        return if(mShowData == null) 0 else mShowData!!.size
+    }
+
+    fun getItem(position: Int): LogcatInfo {
+        return mShowData!![position]
+    }
+
+
+
+    /**
+    * 清空日志
+    * 作者: ZhouZhengyi
+    * 创建时间: 2022/5/14 18:40
+    */
+    @Synchronized
+    fun clear(){
+        //如果两个集合正在遍历，这时候清空数据会发生并发修改异常
+        //如果两个集合增加添加元素，这时候清空，也会出现线程安全问题
+      if(mShowData!=null && mLogcatData!=null){
+          mCleaning = true
+          mShowData!!.clear()
+          mLogcatData!!.clear()
+          mCleaning = false
+          notifyDataSetChanged()
+      }
+    }
+
     /**
     * 添加单条日志
     * 作者: ZhouZhengyi
     * 创建时间: 2022/5/1 9:32
     */
+    @Synchronized
     fun addItem(info:LogcatInfo) {
+        //正在清除则不添加数据
+        if(mCleaning){
+            return
+        }
         if (mShowData!!.isNotEmpty()) {
             var lastInfo = getItem(mShowData!!.size - 1) as LogcatInfo
             if (TextUtils.equals(info.level, lastInfo.level)
@@ -173,7 +224,11 @@ class LogcatAdapter(context: Context) : RecyclerView.Adapter<LogcatAdapter.ViewH
     * 作者: ZhouZhengyi
     * 创建时间: 2022/5/3 10:34
     */
+    @Synchronized
     fun filterData(){
+        if(mCleaning){
+            return
+        }
         //如果没有任何过滤，包括关键字和日志等级
         if(TextUtils.isEmpty(mKeyWord)
             && TextUtils.equals(mContext!!.resources.getStringArray(R.array.logcat_level)[0],mLogLevel)){
@@ -210,11 +265,6 @@ class LogcatAdapter(context: Context) : RecyclerView.Adapter<LogcatAdapter.ViewH
                 &&
                 (TextUtils.equals(mContext!!.resources.getStringArray(R.array.logcat_level)[0],mLogLevel)
                 || TextUtils.equals(info.level,mLogLevel))
-    }
-
-
-    fun getItem(position: Int): LogcatInfo {
-        TODO("Not yet implemented")
     }
 
 
@@ -386,15 +436,5 @@ class LogcatAdapter(context: Context) : RecyclerView.Adapter<LogcatAdapter.ViewH
         fun onItemLongClick(info:LogcatInfo,position:Int)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        TODO("Not yet implemented")
-    }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        TODO("Not yet implemented")
-    }
-
-    override fun getItemCount(): Int {
-        TODO("Not yet implemented")
-    }
 }

@@ -39,7 +39,7 @@ class LogView :BaseFloatView(){
         var logLevelAdapter = ArrayAdapter.createFromResource(floatView.context,
         R.array.logcat_level,R.layout.sc_item_logcat_level)
         mBinding!!.spinnerLevel!!.adapter = logLevelAdapter
-        mBinding!!.spinnerLevel!!.setOnItemSelectedListener(object : AdapterView.OnItemSelectedListener{
+        mBinding!!.spinnerLevel!!.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 var level = floatView?.context?.resources?.getStringArray(R.array.logcat_level)?.get(position)
                 //通过选择的等级来过滤日志显示
@@ -49,7 +49,7 @@ class LogView :BaseFloatView(){
             override fun onNothingSelected(parent: AdapterView<*>?) {
 
             }
-        })
+        }
         mBinding!!.ivClose!!.setOnClickListener{
             //关闭悬浮窗，需要关闭日志功能，清空数据
             LogcatManager.destory()
@@ -62,6 +62,15 @@ class LogView :BaseFloatView(){
         mBinding!!.ivLogSwitch!!.setOnClickListener {
             //暂停或开始捕获
             LogcatManager.switchStatus()
+            //修改图标显示
+            if(LogcatManager.getLogSwitchStatus()){
+                mBinding!!.ivLogSwitch!!.setImageResource(R.mipmap.sc_ic_stop_log)
+            }else{
+                mBinding!!.ivLogSwitch!!.setImageResource(R.mipmap.sc_ic_start_log)
+            }
+        }
+        mBinding!!.ivClearLog!!.setOnClickListener {
+            mAdapter!!.clear()
         }
         //开始捕获日志
         LogcatManager.start(object :LogcatManager.CallBack{
@@ -70,7 +79,8 @@ class LogView :BaseFloatView(){
                 if(info.pid != android.os.Process.myPid()){
                     return
                 }
-
+                //添加日志
+                mAdapter!!.addItem(info)
             }
 
         })

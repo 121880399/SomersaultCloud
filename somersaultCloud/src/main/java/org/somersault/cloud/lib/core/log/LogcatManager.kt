@@ -111,6 +111,15 @@ object LogcatManager {
         isStop = true
     }
 
+    /**
+    * 获取当前日志打印开关状态
+    * 作者: ZhouZhengyi
+    * 创建时间: 2022/5/14 18:04
+    */
+    fun getLogSwitchStatus():Boolean{
+        return LOG_SWITCH
+    }
+
     
     
     val mRunnable = Runnable {
