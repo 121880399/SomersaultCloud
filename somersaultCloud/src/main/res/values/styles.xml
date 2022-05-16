@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="SC"/>
+
+    <style name="SC.Shadow">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">8dp</item>
+    </style>
+
+    <style name="SC.Shadow.Bottom">
+        <item name="android:background">@mipmap/sc_ic_shadow_bottom</item>
+    </style>
+</resources>

@@ -87,7 +87,7 @@ class LogcatAdapter(context: Context) : RecyclerView.Adapter<LogcatAdapter.ViewH
     * 作者: ZhouZhengyi
     * 创建时间: 2022/5/14 19:12
     */
-    private @Volatile var mCleaning = false
+    @Volatile private var mCleaning = false
 
     private var mContext : Context? = null
 

@@ -2,6 +2,8 @@ package org.somersault.cloud.lib.core.log
 
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
+import org.somersault.cloud.lib.core.base.BaseActivity
 
 /**
  * ================================================
@@ -11,7 +13,7 @@ import android.content.Intent
  * 修订历史：
  * ================================================
  */
-class LogcatActivity {
+class LogcatActivity : BaseActivity() {
 
     companion object{
         fun start(context: Context){
@@ -19,5 +21,10 @@ class LogcatActivity {
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             context.startActivity(intent)
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
     }
 }
