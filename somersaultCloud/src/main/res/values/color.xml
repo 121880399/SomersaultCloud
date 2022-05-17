@@ -22,5 +22,7 @@
     <color name="sc_logcat_level_error_color">#FFFF4444</color>
     <color name="sc_logcat_level_assert_color">#FFFFFFFF</color>
 
+    <color name="sc_color_337cc4">#FF337cc4</color>
+
 
 </resources>

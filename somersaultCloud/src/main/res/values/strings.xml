@@ -18,4 +18,6 @@
     </string-array>
     <string name="sc_activity_logcat_title">日志</string>
     <string name="sc_activity_logcat_keyword">请输入关键字</string>
+    <string name="sc_activity_back_top">回到顶部</string>
+    <string name="sc_activity_scroll_to_bottom">滚至底部</string>
 </resources>

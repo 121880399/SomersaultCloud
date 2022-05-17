@@ -102,4 +102,28 @@
             android:layout_marginStart="8dp"
             />
     </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        >
+        <Button
+            android:id="@+id/btn_back_top"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/sc_activity_back_top"
+            android:background="@drawable/sc_shape_log_button"
+            android:textColor="@color/sc_color_337cc4"
+            />
+        <Button
+            android:id="@+id/btn_scroll_to_bottom"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/sc_activity_scroll_to_bottom"
+            android:background="@drawable/sc_shape_log_button"
+            android:textColor="@color/sc_color_337cc4"
+            />
+    </LinearLayout>
 </LinearLayout>
