@@ -1,5 +1,6 @@
 package org.somersault.cloud.lib.core.log
 
+import org.somersault.cloud.lib.utils.Logger
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
@@ -29,7 +30,7 @@ object LogcatManager {
     * 作者: ZhouZhengyi
     * 创建时间: 2022/5/3 12:10
     */
-    @Volatile private var isStop = false
+    @Volatile private var isNeedStop = false
 
     /**
     * 备份Log信息
@@ -42,6 +43,14 @@ object LogcatManager {
 
     var mCallBack : CallBack ? = null
 
+
+    /**
+    * 用于监听线程的状态
+     * 预留
+    * 作者: ZhouZhengyi
+    * 创建时间: 2022/5/18 17:47
+    */
+    var mThreadStatusCallback  : ThreadStatus ? = null
 
     /**
     * 切换捕获日志的状态
@@ -106,9 +115,10 @@ object LogcatManager {
     */
     @Synchronized
     fun destory(){
+        STARTED = false
         LOG_SWITCH = false
         mCallBack = null
-        isStop = true
+        isNeedStop = true
     }
 
     /**
@@ -130,7 +140,11 @@ object LogcatManager {
                 reader = BufferedReader(InputStreamReader(process.inputStream))
                 var line : String ? = null
                 while ((reader.readLine().also { line = it }) != null){
-                    if(isStop){
+                    if(isNeedStop){
+                        Logger.d(LogcatManager::class.java.name,"Thread had stoped!")
+                        if(mThreadStatusCallback!=null){
+                            mThreadStatusCallback?.onThreadStop()
+                        }
                         break
                     }
                     if(IGNORE_LIST.contains(line)){
@@ -155,6 +169,8 @@ object LogcatManager {
                 e.printStackTrace()
                 pause()
             }finally {
+                //执行到这里说明，任务执行完毕，要将isNeedStop标志位恢复false
+                isNeedStop = false
                 if(reader!=null){
                     try{
                         reader.close()
@@ -166,12 +182,22 @@ object LogcatManager {
         }
     }
 
-    public interface CallBack{
+     interface CallBack{
         /**
         * 接收到日志后回调
         * 作者: ZhouZhengyi
         * 创建时间: 2022/4/30 21:15
         */
         fun onReceiveLog(info:LogcatInfo)
+    }
+
+    interface  ThreadStatus{
+
+        /**
+        * 当线程停止时回调
+        * 作者: ZhouZhengyi
+        * 创建时间: 2022/5/18 17:46
+        */
+        fun onThreadStop()
     }
 }

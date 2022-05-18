@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.recyclerview.widget.LinearLayoutManager
 import org.somersault.cloud.lib.R
 import org.somersault.cloud.lib.core.BaseFloatView
 import org.somersault.cloud.lib.databinding.ScViewLogBinding
@@ -36,12 +37,14 @@ class LogView :BaseFloatView(){
 
     override fun onViewCreated(floatView: View) {
         mAdapter = LogcatAdapter(floatView.context,LogDataManager.getAllLogData(),LogDataManager.getShowLogData())
+        mBinding!!.rvLog.layoutManager = LinearLayoutManager(floatView.context)
+        mBinding!!.rvLog.adapter = mAdapter
         var logLevelAdapter = ArrayAdapter.createFromResource(floatView.context,
         R.array.logcat_level,R.layout.sc_item_logcat_level)
         mBinding!!.spinnerLevel!!.adapter = logLevelAdapter
         mBinding!!.spinnerLevel!!.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                var level = floatView?.context?.resources?.getStringArray(R.array.logcat_level)?.get(position)
+                var level = floatView!!.context!!.resources!!.getStringArray(R.array.logcat_level)?.get(position)
                 //通过选择的等级来过滤日志显示
                 LogDataManager.setLogLevel(level!!)
                 mAdapter!!.notifyDataSetChanged()
@@ -54,6 +57,7 @@ class LogView :BaseFloatView(){
         mBinding!!.ivClose!!.setOnClickListener{
             //关闭悬浮窗，需要关闭日志功能，清空数据
             LogcatManager.destory()
+            LogDataManager.reset()
             FloatViewManager.instance.detach(this.mTag)
         }
         mBinding!!.ivExtension!!.setOnClickListener {

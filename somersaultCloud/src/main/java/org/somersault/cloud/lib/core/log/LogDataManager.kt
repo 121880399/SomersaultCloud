@@ -131,6 +131,19 @@ object LogDataManager {
         }
     }
 
+    /**
+    * 将所有数据复原，主要用在关闭日志功能
+     * 这样重新打开日志功能后，能重新开始
+    * 作者: ZhouZhengyi
+    * 创建时间: 2022/5/18 17:32
+    */
+    @Synchronized
+    fun reset(){
+        clear()
+        mKeyWord = ""
+        mLogLevel = ""
+    }
+
 
     /**
      * 设置日志等级
