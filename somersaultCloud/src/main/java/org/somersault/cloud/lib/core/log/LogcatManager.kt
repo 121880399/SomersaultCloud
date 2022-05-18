@@ -64,12 +64,12 @@ object LogcatManager {
     */
     @Synchronized
     fun start(callback:CallBack){
+        mCallBack = callback
         if(STARTED){
             return
         }
         STARTED = true
         LOG_SWITCH = true
-        mCallBack = callback
         Thread(mRunnable).start()
     }
 

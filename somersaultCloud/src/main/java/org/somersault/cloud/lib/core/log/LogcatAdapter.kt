@@ -29,7 +29,7 @@ import java.util.regex.Pattern
  * 修订历史：
  * ================================================
  */
-class LogcatAdapter(context: Context) : RecyclerView.Adapter<LogcatAdapter.ViewHolder>() {
+class LogcatAdapter : RecyclerView.Adapter<LogcatAdapter.ViewHolder> {
 
 
     /**
@@ -60,19 +60,9 @@ class LogcatAdapter(context: Context) : RecyclerView.Adapter<LogcatAdapter.ViewH
     */
     var mItemLongClickListener : OnItemLongClickListener ? = null
 
-    /**
-    * 搜索关键字
-    * 作者: ZhouZhengyi
-    * 创建时间: 2022/5/2 8:35
-    */
-    private var mKeyWord = ""
 
-    /**
-    * 当前日志过滤等级
-    * 作者: ZhouZhengyi
-    * 创建时间: 2022/5/3 9:38
-    */
-    private var mLogLevel = ""
+
+
 
     /**
     * 报错代码正则表达式
@@ -82,35 +72,13 @@ class LogcatAdapter(context: Context) : RecyclerView.Adapter<LogcatAdapter.ViewH
     */
     private val ERROR_CODE_REGEX = Pattern.compile("\\(\\w+\\.\\w+:\\d+\\)")
 
-    /**
-    * 标记是否正在进行清除操作，如果正在清除，则不添加数据
-    * 作者: ZhouZhengyi
-    * 创建时间: 2022/5/14 19:12
-    */
-    @Volatile private var mCleaning = false
 
     private var mContext : Context? = null
 
-    init {
-        mLogcatData = ArrayList()
-        mShowData = mLogcatData
+    constructor(context: Context,logcatData:ArrayList<LogcatInfo>,showData:ArrayList<LogcatInfo>){
+        mLogcatData = logcatData
+        mShowData = showData
         mContext = context
-    }
-
-    companion object{
-        /**
-         * 日志最大限制
-         * 作者: ZhouZhengyi
-         * 创建时间: 2022/5/3 9:42
-         */
-        private val LOG_MAX_COUNT = 1000
-
-        /**
-         * 到达日志最大限制后删除的日志数量
-         * 作者: ZhouZhengyi
-         * 创建时间: 2022/5/3 9:42
-         */
-        private val LOG_REMOVE_COUNT = LOG_MAX_COUNT / 5
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -129,145 +97,6 @@ class LogcatAdapter(context: Context) : RecyclerView.Adapter<LogcatAdapter.ViewH
     fun getItem(position: Int): LogcatInfo {
         return mShowData!![position]
     }
-
-
-
-    /**
-    * 清空日志
-    * 作者: ZhouZhengyi
-    * 创建时间: 2022/5/14 18:40
-    */
-    @Synchronized
-    fun clear(){
-        //如果两个集合正在遍历，这时候清空数据会发生并发修改异常
-        //如果两个集合增加添加元素，这时候清空，也会出现线程安全问题
-      if(mShowData!=null && mLogcatData!=null){
-          mCleaning = true
-          mShowData!!.clear()
-          mLogcatData!!.clear()
-          mCleaning = false
-          notifyDataSetChanged()
-      }
-    }
-
-    /**
-    * 添加单条日志
-    * 作者: ZhouZhengyi
-    * 创建时间: 2022/5/1 9:32
-    */
-    @Synchronized
-    fun addItem(info:LogcatInfo) {
-        //正在清除则不添加数据
-        if(mCleaning){
-            return
-        }
-        if (mShowData!!.isNotEmpty()) {
-            var lastInfo = getItem(mShowData!!.size - 1) as LogcatInfo
-            if (TextUtils.equals(info.level, lastInfo.level)
-                && TextUtils.equals(info.tag, lastInfo.tag)
-            ) {
-                lastInfo.appendLog(info.content!!)
-                notifyItemChanged(mShowData!!.size - 1)
-                return
-            }
-        }
-
-        //判断当前日志信息是否符合显示要求
-        if (isConform(info)) {
-            mShowData!!.add(info)
-
-            //如果当前日志数量超过了最大限定
-            if (mShowData!!.size > LOG_MAX_COUNT) {
-                //删除前200条数据
-                mShowData!!.removeAll(mShowData!!.subList(0, LOG_REMOVE_COUNT))
-                notifyDataSetChanged()
-            } else {
-                notifyItemInserted(mShowData!!.size - 1)
-            }
-        }
-        //最开始mShowData与mLogcatData都指向同一个对象
-        if (mShowData != mLogcatData) {
-            //如果不是同一给对象，mLogcatData也应该添加
-            mLogcatData!!.add(info)
-            //如果所有日志数量超过最大数，删除前200条记录
-            if(mLogcatData!!.size > LOG_MAX_COUNT){
-                mLogcatData!!.removeAll(mLogcatData!!.subList(0, LOG_REMOVE_COUNT))
-            }
-        }
-    }
-
-    /**
-    * 设置关键字
-    * 作者: ZhouZhengyi
-    * 创建时间: 2022/5/3 10:12
-    */
-    fun setKeyWord(keyword:String){
-        mKeyWord = keyword
-        filterData()
-        notifyDataSetChanged()
-    }
-
-
-    /**
-    * 设置日志等级
-    * 作者: ZhouZhengyi
-    * 创建时间: 2022/5/3 10:35
-    */
-    fun setLogLevel(level: String){
-        mLogLevel = level
-        filterData()
-        notifyDataSetChanged()
-    }
-
-    /**
-    * 过滤数据
-    * 作者: ZhouZhengyi
-    * 创建时间: 2022/5/3 10:34
-    */
-    @Synchronized
-    fun filterData(){
-        if(mCleaning){
-            return
-        }
-        //如果没有任何过滤，包括关键字和日志等级
-        if(TextUtils.isEmpty(mKeyWord)
-            && TextUtils.equals(mContext!!.resources.getStringArray(R.array.logcat_level)[0],mLogLevel)){
-            mShowData = mLogcatData
-            return
-        }
-
-        if(mShowData == mLogcatData){
-            //如果目前指向的是同一个对象,由于过滤需要重新创建一个对象
-                //不能影响到所有日志数据
-            mShowData = ArrayList()
-        }
-        mShowData!!.clear()
-
-        //将符合要求的数据过滤出来，添加到显示数据中
-        mLogcatData!!.forEach {
-            if(isConform(it)){
-                mShowData!!.add(it)
-            }
-        }
-    }
-
-    /**
-    * 判断是否符合日志显示的要求
-     * 如果关键字为空或者内容中包含关键字
-     * 并且
-     * 日志等级是最低或者日志等级相等
-     * 才符合要求
-    * 作者: ZhouZhengyi
-    * 创建时间: 2022/5/3 9:39
-    */
-    fun isConform(info:LogcatInfo):Boolean{
-        return (TextUtils.isEmpty(mKeyWord) || info.content!!.contains(mKeyWord))
-                &&
-                (TextUtils.equals(mContext!!.resources.getStringArray(R.array.logcat_level)[0],mLogLevel)
-                || TextUtils.equals(info.level,mLogLevel))
-    }
-
-
 
      inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener,
         View.OnLongClickListener {
@@ -331,26 +160,26 @@ class LogcatAdapter(context: Context) : RecyclerView.Adapter<LogcatAdapter.ViewH
                  content = info.toString()
              }
              var spannable = SpannableString(content)
-             if(!mKeyWord.isNullOrEmpty()){
+             if(!LogDataManager.getKeyWord().isNullOrEmpty()){
                  //有关键字的情况
-                 var index = content.indexOf(mKeyWord)
+                 var index = content.indexOf(LogDataManager.getKeyWord())
                  if(index == -1){
                      //没找到关键字,内容和关键字全部转为小写再找
-                     index = content.lowercase().indexOf(mKeyWord.lowercase())
+                     index = content.lowercase().indexOf(LogDataManager.getKeyWord().lowercase())
                  }
                  //找到了
                  while (index > -1){
                      //高亮开始处为搜索到的位置索引
                      var start = index
                      //结束处为开始+关键词长度
-                     var end = index + mKeyWord!!.length
+                     var end = index + LogDataManager.getKeyWord()!!.length
                      spannable.setSpan(BackgroundColorSpan(Color.BLACK),start,end,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                      spannable.setSpan(ForegroundColorSpan(Color.WHITE),start,end,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                      //从上一次结尾处接着找
-                     index = content.indexOf(mKeyWord,end)
+                     index = content.indexOf(LogDataManager.getKeyWord(),end)
                      //如果没找到，转换为小写再找
                      if(index == -1){
-                         index = content.lowercase().indexOf(mKeyWord.lowercase(),end)
+                         index = content.lowercase().indexOf(LogDataManager.getKeyWord().lowercase(),end)
                      }
                  }
              }else{

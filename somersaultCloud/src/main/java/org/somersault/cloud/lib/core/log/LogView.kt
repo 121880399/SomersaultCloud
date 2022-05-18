@@ -35,7 +35,7 @@ class LogView :BaseFloatView(){
     }
 
     override fun onViewCreated(floatView: View) {
-        mAdapter = LogcatAdapter(floatView.context)
+        mAdapter = LogcatAdapter(floatView.context,LogDataManager.getAllLogData(),LogDataManager.getShowLogData())
         var logLevelAdapter = ArrayAdapter.createFromResource(floatView.context,
         R.array.logcat_level,R.layout.sc_item_logcat_level)
         mBinding!!.spinnerLevel!!.adapter = logLevelAdapter
@@ -43,7 +43,8 @@ class LogView :BaseFloatView(){
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 var level = floatView?.context?.resources?.getStringArray(R.array.logcat_level)?.get(position)
                 //通过选择的等级来过滤日志显示
-                mAdapter!!.setLogLevel(level!!)
+                LogDataManager.setLogLevel(level!!)
+                mAdapter!!.notifyDataSetChanged()
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -70,7 +71,8 @@ class LogView :BaseFloatView(){
             }
         }
         mBinding!!.ivClearLog!!.setOnClickListener {
-            mAdapter!!.clear()
+            LogDataManager.clear()
+            mAdapter!!.notifyDataSetChanged()
         }
         //开始捕获日志
         LogcatManager.start(object :LogcatManager.CallBack{
@@ -80,7 +82,7 @@ class LogView :BaseFloatView(){
                     return
                 }
                 //添加日志
-                mAdapter!!.addItem(info)
+                LogDataManager.addItem(info)
             }
 
         })

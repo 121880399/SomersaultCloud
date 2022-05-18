@@ -3,7 +3,9 @@ package org.somersault.cloud.lib.core.log
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import org.somersault.cloud.lib.core.base.BaseActivity
+import org.somersault.cloud.lib.databinding.ScActivityLogcatBinding
 
 /**
  * ================================================
@@ -23,8 +25,19 @@ class LogcatActivity : BaseActivity() {
         }
     }
 
+    private var mBinding : ScActivityLogcatBinding ? = null
+
+    private var mLogcatAdapter : LogcatAdapter ?  = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        mBinding = ScActivityLogcatBinding.inflate(LayoutInflater.from(this))
+        setContentView(mBinding!!.root)
+        initData()
     }
+
+    private fun initData(){
+        mLogcatAdapter = LogcatAdapter(this,LogDataManager.getAllLogData(),LogDataManager.getShowLogData())
+    }
+
 }
