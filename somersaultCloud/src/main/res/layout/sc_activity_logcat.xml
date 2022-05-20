@@ -37,21 +37,35 @@
         android:id="@+id/view_divider"
         style="@style/SC.Shadow.Bottom"
         />
-
-    <EditText
-        android:id="@+id/log_filter"
-        android:layout_height="50dp"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_below="@id/view_divider"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="15dp"
-        android:background="@drawable/sc_shape_tag_input"
-        android:elevation="1dp"
-        android:hint="@string/sc_activity_logcat_keyword"
-        android:inputType="text"
-        android:paddingStart="15dp"
-        android:paddingEnd="15dp" />
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        >
+        <EditText
+            android:id="@+id/log_filter"
+            android:layout_height="50dp"
+            android:layout_width="match_parent"
+            android:background="@drawable/sc_shape_tag_input"
+            android:elevation="1dp"
+            android:hint="@string/sc_activity_logcat_keyword"
+            android:inputType="text"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp" />
+
+        <ImageView
+            android:id="@+id/iv_log_search"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@mipmap/sc_ic_delete_record"
+            android:layout_marginEnd="15dp"
+            android:visibility="gone"
+            tools:visibility="visible" />
+    </RelativeLayout>
+
     <Spinner
         android:id="@+id/spinner_preset_tag"
         android:layout_width="match_parent"
@@ -129,8 +143,9 @@
             android:textColor="@color/sc_color_337cc4"
             />
     </LinearLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_log"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 </LinearLayout>

@@ -1,12 +1,17 @@
 package org.somersault.cloud.lib.core.log
 
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.appcompat.app.AlertDialog
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import org.somersault.cloud.lib.R
 import org.somersault.cloud.lib.core.base.BaseActivity
@@ -29,6 +34,13 @@ class LogcatActivity : BaseActivity() {
             context.startActivity(intent)
         }
     }
+
+    /**
+    * 记录搜素过的关键字
+    * 作者: ZhouZhengyi
+    * 创建时间: 2022/5/20 8:40
+    */
+    private val mSearchKeywords = ArrayList<String>()
 
     private var mBinding : ScActivityLogcatBinding ? = null
 
@@ -83,8 +95,82 @@ class LogcatActivity : BaseActivity() {
             LogDataManager.clear()
             mLogcatAdapter!!.notifyDataSetChanged()
         }
+        mBinding!!.logFilter!!.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+               mBinding!!.logFilter!!.removeCallbacks(mSearchRunnable)
+               mBinding!!.logFilter!!.postDelayed(mSearchRunnable,300)
+
+               //移除的主要目的是用户连续输入，下次执行该方法的时候，可能还没有执行该任务，所以将之前的任务移除掉
+               mBinding!!.logFilter!!.removeCallbacks(mRecordKeywordRunnable)
+               //因为没有搜索按钮可以点击，只能一段时间记录一次用户输入的数据
+               mBinding!!.logFilter!!.postDelayed(mRecordKeywordRunnable,3000)
+            }
+        })
+        mBinding!!.ivLogSearch!!.setOnClickListener {
+            var keyword = mBinding!!.logFilter!!.text.toString()
+            if(keyword.isNotEmpty()){
+                mBinding!!.logFilter!!.setText("")
+            }else{
+                showRecords()
+            }
+        }
         //分享功能
         //导出日志功能
+    }
+
+    private fun showRecords(){
+        val list = mSearchKeywords.toTypedArray()
+        AlertDialog.Builder(this).setItems(list
+        ) { dialog, which ->
+            mBinding!!.logFilter!!.setText(mSearchKeywords!![which])
+            mBinding!!.logFilter!!.setSelection(mBinding!!.logFilter!!.text.toString().length)
+        }.show()
+    }
+
+    /**
+    * 搜索关键字任务
+    * 作者: ZhouZhengyi
+    * 创建时间: 2022/5/20 8:28
+    */
+    private val mSearchRunnable = Runnable {
+        var keyword = mBinding!!.logFilter!!.text.toString()
+        LogDataManager.setKeyWord(keyword)
+        mLogcatAdapter!!.notifyDataSetChanged()
+        mBinding!!.rvLog!!.layoutManager!!.scrollToPosition(mLogcatAdapter!!.itemCount-1)
+        if(keyword.isNotEmpty()){
+            //显示删除按钮
+            mBinding!!.ivLogSearch!!.visibility = View.VISIBLE
+            mBinding!!.ivLogSearch!!.setImageResource(R.mipmap.sc_ic_delete_record)
+        }else{
+            //如果存在记录，则显示记录按钮
+            if(mSearchKeywords.isNotEmpty()){
+                mBinding!!.ivLogSearch!!.visibility = View.VISIBLE
+                mBinding!!.ivLogSearch!!.setImageResource(R.mipmap.sc_ic_record)
+            }else{
+                mBinding!!.ivLogSearch!!.visibility = View.GONE
+            }
+        }
+    }
+
+    /**
+    * 记录关键字任务
+    * 作者: ZhouZhengyi
+    * 创建时间: 2022/5/20 9:03
+    */
+    private val mRecordKeywordRunnable = Runnable {
+        var keyword = mBinding!!.logFilter!!.text.toString()
+        if(keyword.isNullOrEmpty() || mSearchKeywords.contains(keyword)){
+            return@Runnable
+        }
+        mSearchKeywords.add(keyword)
     }
 
 }
