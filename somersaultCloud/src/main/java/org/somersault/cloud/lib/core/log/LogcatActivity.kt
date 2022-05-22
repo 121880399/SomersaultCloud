@@ -12,10 +12,14 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.coroutines.*
 import org.somersault.cloud.lib.R
 import org.somersault.cloud.lib.core.base.BaseActivity
 import org.somersault.cloud.lib.databinding.ScActivityLogcatBinding
+import org.somersault.cloud.lib.utils.SCThreadManager
+import java.lang.Runnable
 
 /**
  * ================================================
@@ -45,6 +49,7 @@ class LogcatActivity : BaseActivity() {
     private var mBinding : ScActivityLogcatBinding ? = null
 
     private var mLogcatAdapter : LogcatAdapter ?  = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -123,7 +128,13 @@ class LogcatActivity : BaseActivity() {
             }
         }
         //分享功能
-        //导出日志功能
+        mBinding!!.ivShareLog!!.setOnClickListener {
+            this@LogcatActivity.lifecycleScope.launch{
+                withContext(SCThreadManager.getSaveLogDispatcher()){
+
+                }
+            }
+        }
     }
 
     private fun showRecords(){
@@ -172,5 +183,6 @@ class LogcatActivity : BaseActivity() {
         }
         mSearchKeywords.add(keyword)
     }
+
 
 }

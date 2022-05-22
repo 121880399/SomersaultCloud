@@ -117,6 +117,7 @@
             android:layout_height="20dp"
             android:src="@mipmap/sc_ic_export"
             android:layout_marginStart="8dp"
+            android:visibility="gone"
             />
     </LinearLayout>
     <LinearLayout

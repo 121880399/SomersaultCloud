@@ -55,6 +55,14 @@ class LogcatInfo private constructor(){
     */
     var tid : Int ? = null
 
+    /**
+    * 原始的内容，记录这个主要是为了分享的时候
+     * 写入文件
+    * 作者: ZhouZhengyi
+    * 创建时间: 2022/5/22 9:54
+    */
+    var originContent : String ? = null
+
     companion object{
 
         val SPACE = " "
@@ -77,6 +85,7 @@ class LogcatInfo private constructor(){
             info.level = matcher.group(4)
             info.tag = matcher.group(5)
             info.content = matcher.group(6)
+            info.originContent = line
             return info
         }
     }
