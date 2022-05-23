@@ -20,4 +20,6 @@
     <string name="sc_activity_logcat_keyword">请输入关键字</string>
     <string name="sc_activity_back_top">回到顶部</string>
     <string name="sc_activity_scroll_to_bottom">滚至底部</string>
+    <string name="sc_create_log_file_failed">日志文件创建失败</string>
+    <string name="sc_not_support_on_this_device">设备不支持分享</string>
 </resources>

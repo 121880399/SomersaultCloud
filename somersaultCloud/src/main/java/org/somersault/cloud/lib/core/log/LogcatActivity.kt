@@ -10,7 +10,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.FileProvider
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,8 +20,13 @@ import kotlinx.coroutines.*
 import org.somersault.cloud.lib.R
 import org.somersault.cloud.lib.core.base.BaseActivity
 import org.somersault.cloud.lib.databinding.ScActivityLogcatBinding
+import org.somersault.cloud.lib.utils.DateUtils
+import org.somersault.cloud.lib.utils.FileUtils
 import org.somersault.cloud.lib.utils.SCThreadManager
+import java.io.*
 import java.lang.Runnable
+import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * ================================================
@@ -130,10 +137,51 @@ class LogcatActivity : BaseActivity() {
         //分享功能
         mBinding!!.ivShareLog!!.setOnClickListener {
             this@LogcatActivity.lifecycleScope.launch{
+                var file : File ? = null
                 withContext(SCThreadManager.getSaveLogDispatcher()){
-
+                    file = saveFile()
+                }
+                if(file == null){
+                    Toast.makeText(this@LogcatActivity,R.string.sc_create_log_file_failed,Toast.LENGTH_SHORT).show()
+                }else{
+                    val shareIntent = Intent(Intent.ACTION_SEND)
+                    shareIntent.type = "text/plain"
+                    val uri = FileProvider.getUriForFile(applicationContext, "$packageName.logcat_fileprovider",file!!)
+                    shareIntent.putExtra(Intent.EXTRA_STREAM,uri)
+                    if(packageManager.queryIntentActivities(shareIntent,0).isEmpty()){
+                        Toast.makeText(this@LogcatActivity,R.string.sc_not_support_on_this_device,Toast.LENGTH_SHORT).show()
+                    }else{
+                        startActivity(shareIntent)
+                    }
                 }
             }
+        }
+    }
+
+    private fun saveFile():File?{
+        if(!FileUtils.isExternalStorageWritable()){
+            return null
+        }
+        val externalFilesDir = getExternalFilesDir(null) ?: return null
+        val allData = LogDataManager.getAllLogData() ?: return null
+        val logFile = File(externalFilesDir,DateUtils.DATE_FORMAT.format(Date()) + ".txt")
+        if(logFile.exists()){
+            if(!logFile.delete()){
+                return null
+            }
+        }
+        var writer : BufferedWriter ? = null
+        return try {
+            writer = BufferedWriter(OutputStreamWriter(FileOutputStream(logFile)))
+            allData.forEach {
+                writer.write(it.originContent+"\n")
+            }
+            logFile
+        }catch (e : IOException){
+            e.printStackTrace()
+            null
+        }finally {
+            writer?.close()
         }
     }
 
