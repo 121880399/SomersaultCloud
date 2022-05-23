@@ -156,7 +156,23 @@ class LogcatActivity : BaseActivity() {
                 }
             }
         }
+        //回到顶部
+        mBinding!!.btnBackTop!!.setOnClickListener {
+            if(mLogcatAdapter == null || mLogcatAdapter!!.itemCount == 0){
+                return@setOnClickListener
+            }
+            mBinding!!.rvLog!!.scrollToPosition(0)
+        }
+
+        //滚至底部
+        mBinding!!.btnScrollToBottom!!.setOnClickListener {
+            if(mLogcatAdapter == null || mLogcatAdapter!!.itemCount == 0){
+                return@setOnClickListener
+            }
+            mBinding!!.rvLog!!.scrollToPosition(mLogcatAdapter!!.itemCount-1)
+        }
     }
+
 
     private fun saveFile():File?{
         if(!FileUtils.isExternalStorageWritable()){
