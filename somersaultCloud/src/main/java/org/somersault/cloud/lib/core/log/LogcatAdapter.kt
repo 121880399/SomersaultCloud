@@ -51,14 +51,14 @@ class LogcatAdapter : RecyclerView.Adapter<LogcatAdapter.ViewHolder> {
     * 作者: ZhouZhengyi
     * 创建时间: 2022/5/1 11:12
     */
-    var mItemClickListener : OnItemClickListener ? = null
+    private var mItemClickListener : OnItemClickListener ? = null
 
     /**
     * Item长按监听器
     * 作者: ZhouZhengyi
     * 创建时间: 2022/5/1 11:12
     */
-    var mItemLongClickListener : OnItemLongClickListener ? = null
+    private var mItemLongClickListener : OnItemLongClickListener ? = null
 
 
 
@@ -98,6 +98,14 @@ class LogcatAdapter : RecyclerView.Adapter<LogcatAdapter.ViewHolder> {
         return mShowData!![position]
     }
 
+    fun setOnItemClickListener(listener:OnItemClickListener){
+        mItemClickListener = listener
+    }
+
+    fun setOnItemLongClickListener(listener : OnItemLongClickListener){
+        mItemLongClickListener = listener
+    }
+
      inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener,
         View.OnLongClickListener {
         private var mLogContentSv : ClickableHorizontalScrollView ? = null
@@ -109,8 +117,8 @@ class LogcatAdapter : RecyclerView.Adapter<LogcatAdapter.ViewHolder> {
             mContentTv = itemView.findViewById(R.id.tv_content)
             mDividerView = itemView.findViewById(R.id.v_divider)
 
-            itemView.setOnClickListener(this)
-            itemView.setOnLongClickListener(this)
+            mLogContentSv!!.setClickListener(this)
+            mLogContentSv!!.setLongClickListener(this)
         }
 
         override fun onClick(v: View?) {
@@ -122,7 +130,7 @@ class LogcatAdapter : RecyclerView.Adapter<LogcatAdapter.ViewHolder> {
             return false
         }
 
-         fun getColorResId(level : String):Int{
+         private fun getColorResId(level : String):Int{
              when(level){
                  mContentTv!!.context.resources.getStringArray(R.array.logcat_level)[0] ->{
                     return R.color.sc_logcat_level_verbose_color
@@ -198,15 +206,15 @@ class LogcatAdapter : RecyclerView.Adapter<LogcatAdapter.ViewHolder> {
                      }
                  }
              }
-             mContentTv!!.setText(spannable)
+             mContentTv!!.text = spannable
              var colorResId = getColorResId(info.level!!)
              var textColor = -1
-             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                 textColor = mContentTv!!.resources.getColor(colorResId,mContentTv!!.context.theme)
+             textColor = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                 mContentTv!!.resources.getColor(colorResId,mContentTv!!.context.theme)
              }else{
-                 textColor = mContentTv!!.resources.getColor(colorResId)
+                 mContentTv!!.resources.getColor(colorResId)
              }
-             mContentTv!!.setTextColor(colorResId)
+             mContentTv!!.setTextColor(textColor)
              mDividerView!!.visibility = if(position == 0) View.INVISIBLE else View.VISIBLE
              mLogContentSv!!.post(mScrollRunnable)
          }
@@ -252,7 +260,7 @@ class LogcatAdapter : RecyclerView.Adapter<LogcatAdapter.ViewHolder> {
     * 作者: ZhouZhengyi
     * 创建时间: 2022/5/1 11:08
     */
-    public interface OnItemClickListener{
+     interface OnItemClickListener{
         fun onItemClick(info:LogcatInfo,position:Int)
     }
 
@@ -261,7 +269,7 @@ class LogcatAdapter : RecyclerView.Adapter<LogcatAdapter.ViewHolder> {
     * 作者: ZhouZhengyi
     * 创建时间: 2022/5/1 11:09
     */
-    public interface OnItemLongClickListener{
+     interface OnItemLongClickListener{
         fun onItemLongClick(info:LogcatInfo,position:Int)
     }
 

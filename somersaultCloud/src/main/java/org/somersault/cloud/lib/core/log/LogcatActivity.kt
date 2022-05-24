@@ -1,7 +1,8 @@
 package org.somersault.cloud.lib.core.log
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -171,8 +172,46 @@ class LogcatActivity : BaseActivity() {
             }
             mBinding!!.rvLog!!.scrollToPosition(mLogcatAdapter!!.itemCount-1)
         }
+        //Item点击事件
+        mLogcatAdapter!!.setOnItemClickListener(object : LogcatAdapter.OnItemClickListener {
+            override fun onItemClick(info: LogcatInfo, position: Int) {
+
+            }
+
+        })
+        //Item长按事件
+        mLogcatAdapter!!.setOnItemLongClickListener(object : LogcatAdapter.OnItemLongClickListener {
+            override fun onItemLongClick(info: LogcatInfo, position: Int) {
+               val list = arrayOf("复制","分享")
+                AlertDialog.Builder(this@LogcatActivity).setItems(list
+                ) { dialog, which ->
+                    when (which){
+                        0 -> copyLog(position)
+                        1 -> shareLog(position)
+                    }
+                }.show()
+            }
+
+        })
     }
 
+
+    private fun copyLog(position : Int){
+        val manager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        if(manager != null){
+            manager.setPrimaryClip(ClipData.newPlainText("log",mLogcatAdapter!!.getItem(position).originContent))
+            Toast.makeText(this,R.string.sc_logcat_copy_success,Toast.LENGTH_SHORT).show()
+        }else{
+            Toast.makeText(this,R.string.sc_logcat_copy_failed,Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun shareLog(positon : Int){
+        val intent = Intent(Intent.ACTION_SEND)
+        intent.type = "text/plain"
+        intent.putExtra(Intent.EXTRA_TEXT,mLogcatAdapter!!.getItem(positon).originContent)
+        startActivity(intent)
+    }
 
     private fun saveFile():File?{
         if(!FileUtils.isExternalStorageWritable()){

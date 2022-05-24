@@ -22,4 +22,6 @@
     <string name="sc_activity_scroll_to_bottom">滚至底部</string>
     <string name="sc_create_log_file_failed">日志文件创建失败</string>
     <string name="sc_not_support_on_this_device">设备不支持分享</string>
+    <string name="sc_logcat_copy_success">日志复制成功</string>
+    <string name="sc_logcat_copy_failed">日志复制失败</string>
 </resources>
