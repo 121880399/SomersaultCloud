@@ -3,6 +3,7 @@ package org.somersault.cloud.lib.core.log
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -10,6 +11,8 @@ import org.somersault.cloud.lib.R
 import org.somersault.cloud.lib.core.BaseFloatView
 import org.somersault.cloud.lib.databinding.ScViewLogBinding
 import org.somersault.cloud.lib.manager.FloatViewManager
+import org.somersault.cloud.lib.plugin.LogPlugin
+import org.somersault.cloud.lib.utils.ScreenUtils
 import org.somersault.cloud.lib.widget.CustomLayoutParams
 
 /**
@@ -36,6 +39,7 @@ class LogView :BaseFloatView(){
     }
 
     override fun onViewCreated(floatView: View) {
+        LogDataManager.init(floatView.context)
         mAdapter = LogcatAdapter(floatView.context,LogDataManager.getAllLogData(),LogDataManager.getShowLogData())
         mBinding!!.rvLog.layoutManager = LinearLayoutManager(floatView.context)
         mBinding!!.rvLog.adapter = mAdapter
@@ -59,10 +63,12 @@ class LogView :BaseFloatView(){
             LogcatManager.destory()
             LogDataManager.reset()
             FloatViewManager.instance.detach(this.mTag)
+            LogPlugin.isOpen = false
         }
         mBinding!!.ivExtension!!.setOnClickListener {
             //切换到Activity显示
             LogcatActivity.start(floatView.context)
+            FloatViewManager.instance.detach(this.mTag)
         }
         mBinding!!.ivLogSwitch!!.setOnClickListener {
             //暂停或开始捕获
@@ -81,14 +87,10 @@ class LogView :BaseFloatView(){
         //开始捕获日志
         LogcatManager.start(object :LogcatManager.CallBack{
             override fun onReceiveLog(info: LogcatInfo) {
-                //只打印当前进程的
-                if(info.pid != android.os.Process.myPid()){
-                    return
-                }
                 //添加日志
                 LogDataManager.addItem(info)
+                mAdapter!!.notifyDataSetChanged()
             }
-
         })
     }
 
@@ -97,7 +99,15 @@ class LogView :BaseFloatView(){
 
     }
 
+    /**
+    * 初始化悬浮窗的宽高
+    * 作者: ZhouZhengyi
+    * 创建时间: 2022/5/24 9:05
+    */
     override fun initFloatViewLayoutParams(params: CustomLayoutParams) {
-
+        params.width = ViewGroup.LayoutParams.WRAP_CONTENT
+        params.height = 600
+        params.x = ScreenUtils.dp2px(30F).toInt()
+        params.y = ScreenUtils.dp2px(30F).toInt()
     }
 }

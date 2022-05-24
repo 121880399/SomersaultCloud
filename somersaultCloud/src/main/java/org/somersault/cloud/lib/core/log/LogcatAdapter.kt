@@ -14,6 +14,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import org.somersault.cloud.lib.R
 import org.somersault.cloud.lib.databinding.ScItemLogcatBinding
@@ -163,7 +164,7 @@ class LogcatAdapter : RecyclerView.Adapter<LogcatAdapter.ViewHolder> {
                  content = String.format("%s" + LogcatInfo.SPACE + "%d"+"-"+"%d"
                          + LogcatInfo.SPACE + "%s"
                  +(if(log!!.startsWith("\n")) LogcatInfo.SPACE else "\n")
-                     + "%s",info.time,info.tag,log)
+                     + "%s",info.time,info.pid,info.tid,info.tag,log)
              }else{
                  content = info.toString()
              }
@@ -208,12 +209,7 @@ class LogcatAdapter : RecyclerView.Adapter<LogcatAdapter.ViewHolder> {
              }
              mContentTv!!.text = spannable
              var colorResId = getColorResId(info.level!!)
-             var textColor = -1
-             textColor = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                 mContentTv!!.resources.getColor(colorResId,mContentTv!!.context.theme)
-             }else{
-                 mContentTv!!.resources.getColor(colorResId)
-             }
+             val textColor = ContextCompat.getColor(mContentTv!!.context,colorResId)
              mContentTv!!.setTextColor(textColor)
              mDividerView!!.visibility = if(position == 0) View.INVISIBLE else View.VISIBLE
              mLogContentSv!!.post(mScrollRunnable)

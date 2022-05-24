@@ -1,5 +1,7 @@
 package org.somersault.cloud.lib.utils
 
+import android.os.Handler
+import android.os.Looper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asCoroutineDispatcher
 import java.util.concurrent.LinkedBlockingQueue
@@ -26,6 +28,8 @@ object SCThreadManager {
     */
     private var mSaveLogSingleThreadExecutor : ThreadPoolExecutor ? = null
 
+    private var mMainThreadHandler : Handler ? = null
+
     init {
         mSaveLogSingleThreadExecutor = ThreadPoolExecutor(1,1,60L
             ,TimeUnit.SECONDS,LinkedBlockingQueue(), ThreadFactory {
@@ -33,6 +37,7 @@ object SCThreadManager {
                 thread.name = "Save_Log_Thread"
                 return@ThreadFactory thread
             })
+        mMainThreadHandler = Handler(Looper.getMainLooper())
     }
 
     /**
@@ -43,5 +48,14 @@ object SCThreadManager {
     */
     fun getSaveLogDispatcher(): CoroutineContext {
         return mSaveLogSingleThreadExecutor!!.asCoroutineDispatcher()
+    }
+
+    /**
+    * 在主线程中运行
+    * 作者: ZhouZhengyi
+    * 创建时间: 2022/5/24 9:43
+    */
+    fun runOnUIThread(runnable : Runnable){
+        mMainThreadHandler!!.post(runnable)
     }
 }

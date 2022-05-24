@@ -21,6 +21,7 @@ import kotlinx.coroutines.*
 import org.somersault.cloud.lib.R
 import org.somersault.cloud.lib.core.base.BaseActivity
 import org.somersault.cloud.lib.databinding.ScActivityLogcatBinding
+import org.somersault.cloud.lib.plugin.LogPlugin
 import org.somersault.cloud.lib.utils.DateUtils
 import org.somersault.cloud.lib.utils.FileUtils
 import org.somersault.cloud.lib.utils.SCThreadManager
@@ -77,6 +78,7 @@ class LogcatActivity : BaseActivity() {
             //退出日志功能,先停止日志采集，再清空数据
             LogcatManager.destory()
             LogDataManager.reset()
+            LogPlugin.isOpen = false
             finish()
         }
         var logLevelAdapter = ArrayAdapter.createFromResource(this,
@@ -192,6 +194,18 @@ class LogcatActivity : BaseActivity() {
                 }.show()
             }
 
+        })
+        //开始捕获日志
+        LogcatManager.start(object :LogcatManager.CallBack{
+            override fun onReceiveLog(info: LogcatInfo) {
+                //只打印当前进程的
+                if(info.pid != android.os.Process.myPid()){
+                    return
+                }
+                //添加日志
+                LogDataManager.addItem(info)
+                mLogcatAdapter!!.notifyDataSetChanged()
+            }
         })
     }
 

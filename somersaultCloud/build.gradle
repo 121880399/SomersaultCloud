@@ -49,5 +49,5 @@ dependencies {
     implementation 'me.weishu:free_reflection:3.0.1'
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0")
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.1'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
 }

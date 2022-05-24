@@ -200,8 +200,8 @@ abstract class BaseFloatView : IFloatView, OnTouchEventListener {
 
     private fun onLayoutParamsCreated(params: FrameLayout.LayoutParams) {
         //如果悬浮窗自定义了初始化值，则使用自定义的
-        params.width = mCustomLayoutParams?.width ?: 0
-        params.height = mCustomLayoutParams?.height ?: 0
+        params.width = mCustomLayoutParams!!.width ?: 0
+        params.height = mCustomLayoutParams!!.height ?: 0
         params.gravity = mCustomLayoutParams!!.gravity
 
 //        val floatViewCurrentPosition = FloatViewManager.instance.getFloatViewCurrentPosition(mTag)

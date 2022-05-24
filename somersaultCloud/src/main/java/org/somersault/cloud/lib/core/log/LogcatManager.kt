@@ -1,6 +1,8 @@
 package org.somersault.cloud.lib.core.log
 
+import android.widget.Toast
 import org.somersault.cloud.lib.utils.Logger
+import org.somersault.cloud.lib.utils.SCThreadManager
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader
@@ -158,7 +160,11 @@ object LogcatManager {
                         }
 
                         if(mCallBack!=null){
-                            mCallBack!!.onReceiveLog(info!!)
+                            //只打印当前进程的
+                            if(info!!.pid != android.os.Process.myPid()){
+                                continue
+                            }
+                            SCThreadManager.runOnUIThread { mCallBack!!.onReceiveLog(info!!) }
                         }
                     }catch (e : Exception){
                         e.printStackTrace()
@@ -171,6 +177,7 @@ object LogcatManager {
             }finally {
                 //执行到这里说明，任务执行完毕，要将isNeedStop标志位恢复false
                 isNeedStop = false
+                Logger.d(LogcatManager::class.java.name,"Thread exit")
                 if(reader!=null){
                     try{
                         reader.close()

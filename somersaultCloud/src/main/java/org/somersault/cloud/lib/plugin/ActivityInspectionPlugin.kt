@@ -50,7 +50,7 @@ class ActivityInspectionPlugin : IFunctionPlugin{
             Toast.makeText(currentActivity,"页面检测打开!",Toast.LENGTH_LONG).show()
             HandlerHooker.doHook()
             view = ActivityInspectionView()
-            view?.init(currentActivity)
+            view!!.init(currentActivity)
             FloatViewManager.instance.attach(view!!,currentActivity)
             isOpen = true
         }
