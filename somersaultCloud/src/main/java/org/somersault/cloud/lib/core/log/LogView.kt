@@ -6,12 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import org.somersault.cloud.lib.R
 import org.somersault.cloud.lib.core.BaseFloatView
 import org.somersault.cloud.lib.databinding.ScViewLogBinding
 import org.somersault.cloud.lib.manager.FloatViewManager
 import org.somersault.cloud.lib.plugin.LogPlugin
+import org.somersault.cloud.lib.utils.ApplicationUtils
+import org.somersault.cloud.lib.utils.SCThreadManager
 import org.somersault.cloud.lib.utils.ScreenUtils
 import org.somersault.cloud.lib.widget.CustomLayoutParams
 
@@ -40,18 +43,19 @@ class LogView :BaseFloatView(){
 
     override fun onViewCreated(floatView: View) {
         LogDataManager.init(floatView.context)
-        mAdapter = LogcatAdapter(floatView.context,LogDataManager.getAllLogData(),LogDataManager.getShowLogData())
+        mAdapter = LogcatAdapter(floatView.context,LogDataManager.getShowLogData())
         mBinding!!.rvLog.layoutManager = LinearLayoutManager(floatView.context)
         mBinding!!.rvLog.adapter = mAdapter
+        //R.array.logcat_level 只用于在界面上显示，不要用于数据处理和判断，数据处理使用LogcatInfo中定义的等级
         var logLevelAdapter = ArrayAdapter.createFromResource(floatView.context,
         R.array.logcat_level,R.layout.sc_item_logcat_level)
         mBinding!!.spinnerLevel!!.adapter = logLevelAdapter
         mBinding!!.spinnerLevel!!.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                var level = floatView!!.context!!.resources!!.getStringArray(R.array.logcat_level)?.get(position)
+                var level = LogcatInfo.getLevel(position)
                 //通过选择的等级来过滤日志显示
                 LogDataManager.setLogLevel(level!!)
-                mAdapter!!.notifyDataSetChanged()
+                mAdapter!!.setData(LogDataManager.getShowLogData())
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -89,7 +93,7 @@ class LogView :BaseFloatView(){
             override fun onReceiveLog(info: LogcatInfo) {
                 //添加日志
                 LogDataManager.addItem(info)
-                mAdapter!!.notifyDataSetChanged()
+                mAdapter!!.setData(LogDataManager.getShowLogData())
             }
         })
     }
@@ -105,8 +109,8 @@ class LogView :BaseFloatView(){
     * 创建时间: 2022/5/24 9:05
     */
     override fun initFloatViewLayoutParams(params: CustomLayoutParams) {
-        params.width = ViewGroup.LayoutParams.WRAP_CONTENT
-        params.height = 600
+        params.width = ScreenUtils.dp2px(300F).toInt()
+        params.height = ScreenUtils.dp2px(400F).toInt()
         params.x = ScreenUtils.dp2px(30F).toInt()
         params.y = ScreenUtils.dp2px(30F).toInt()
     }

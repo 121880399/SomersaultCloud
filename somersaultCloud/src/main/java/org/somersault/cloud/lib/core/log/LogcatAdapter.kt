@@ -14,10 +14,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import org.somersault.cloud.lib.R
 import org.somersault.cloud.lib.databinding.ScItemLogcatBinding
+import org.somersault.cloud.lib.utils.ApplicationUtils
+import org.somersault.cloud.lib.utils.Logger
 import org.somersault.cloud.lib.utils.ScreenUtils
 import org.somersault.cloud.lib.widget.ClickableHorizontalScrollView
 import java.util.regex.Pattern
@@ -33,12 +36,6 @@ import java.util.regex.Pattern
 class LogcatAdapter : RecyclerView.Adapter<LogcatAdapter.ViewHolder> {
 
 
-    /**
-    * 所有的日志数据
-    * 作者: ZhouZhengyi
-    * 创建时间: 2022/5/1 10:00
-    */
-    private var mLogcatData : ArrayList<LogcatInfo> ? = null
 
     /**
     * 当前显示的数据
@@ -76,8 +73,7 @@ class LogcatAdapter : RecyclerView.Adapter<LogcatAdapter.ViewHolder> {
 
     private var mContext : Context? = null
 
-    constructor(context: Context,logcatData:ArrayList<LogcatInfo>,showData:ArrayList<LogcatInfo>){
-        mLogcatData = logcatData
+    constructor(context: Context,showData:ArrayList<LogcatInfo>){
         mShowData = showData
         mContext = context
     }
@@ -93,6 +89,11 @@ class LogcatAdapter : RecyclerView.Adapter<LogcatAdapter.ViewHolder> {
 
     override fun getItemCount(): Int {
         return if(mShowData == null) 0 else mShowData!!.size
+    }
+
+    fun setData(data : ArrayList<LogcatInfo>){
+        mShowData = data
+        notifyDataSetChanged()
     }
 
     fun getItem(position: Int): LogcatInfo {
@@ -133,26 +134,26 @@ class LogcatAdapter : RecyclerView.Adapter<LogcatAdapter.ViewHolder> {
 
          private fun getColorResId(level : String):Int{
              when(level){
-                 mContentTv!!.context.resources.getStringArray(R.array.logcat_level)[0] ->{
+                "V"->{
                     return R.color.sc_logcat_level_verbose_color
                 }
-                 mContentTv!!.context.resources.getStringArray(R.array.logcat_level)[1] ->{
+                 "D" ->{
                      return R.color.sc_logcat_level_debug_color
                  }
-                 mContentTv!!.context.resources.getStringArray(R.array.logcat_level)[2] ->{
+                 "I" ->{
                      return R.color.sc_logcat_level_info_color
                  }
-                 mContentTv!!.context.resources.getStringArray(R.array.logcat_level)[3] ->{
+                 "W" ->{
                      return R.color.sc_logcat_level_warn_color
                  }
-                 mContentTv!!.context.resources.getStringArray(R.array.logcat_level)[4] ->{
+                 "E" ->{
                      return R.color.sc_logcat_level_error_color
                  }
-                 mContentTv!!.context.resources.getStringArray(R.array.logcat_level)[5] ->{
+                 "A" ->{
                      return R.color.sc_logcat_level_assert_color
                  }
                  else ->{
-                     return  R.color.sc_logcat_level_assert_color
+                     return  R.color.sc_logcat_level_verbose_color
                  }
              }
          }
@@ -209,7 +210,7 @@ class LogcatAdapter : RecyclerView.Adapter<LogcatAdapter.ViewHolder> {
              }
              mContentTv!!.text = spannable
              var colorResId = getColorResId(info.level!!)
-             val textColor = ContextCompat.getColor(mContentTv!!.context,colorResId)
+             val textColor = ContextCompat.getColor(mContext!!,colorResId)
              mContentTv!!.setTextColor(textColor)
              mDividerView!!.visibility = if(position == 0) View.INVISIBLE else View.VISIBLE
              mLogContentSv!!.post(mScrollRunnable)

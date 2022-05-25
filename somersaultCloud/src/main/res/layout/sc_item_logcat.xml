@@ -19,7 +19,7 @@
             android:paddingEnd="45dp"
             android:paddingRight="40dp"
             android:paddingBottom="5dp"
-            android:textSize="16sp"
+            android:textSize="14sp"
             tools:text="11:20 Tag test" />
     </org.somersault.cloud.lib.widget.ClickableHorizontalScrollView>
     <View

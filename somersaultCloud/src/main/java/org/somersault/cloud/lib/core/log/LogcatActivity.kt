@@ -68,7 +68,7 @@ class LogcatActivity : BaseActivity() {
     }
 
     private fun initData(){
-        mLogcatAdapter = LogcatAdapter(this,LogDataManager.getAllLogData(),LogDataManager.getShowLogData())
+        mLogcatAdapter = LogcatAdapter(this,LogDataManager.getShowLogData())
         mBinding!!.rvLog.layoutManager = LinearLayoutManager(this)
         mBinding!!.rvLog.adapter = mLogcatAdapter
         mBinding!!.ivLogSwitch.setOnClickListener {
@@ -86,10 +86,10 @@ class LogcatActivity : BaseActivity() {
         mBinding!!.spinnerLevel.adapter = logLevelAdapter
         mBinding!!.spinnerLevel.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                var level = resources!!.getStringArray(R.array.logcat_level)?.get(position)
+                var level = LogcatInfo.getLevel(position)
                 //通过选择的等级来过滤日志显示
                 LogDataManager.setLogLevel(level!!)
-                mLogcatAdapter!!.notifyDataSetChanged()
+                mLogcatAdapter!!.setData(LogDataManager.getShowLogData())
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {

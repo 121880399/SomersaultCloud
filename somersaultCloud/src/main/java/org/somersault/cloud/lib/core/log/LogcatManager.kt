@@ -1,6 +1,7 @@
 package org.somersault.cloud.lib.core.log
 
 import android.widget.Toast
+import org.somersault.cloud.lib.utils.ApplicationUtils
 import org.somersault.cloud.lib.utils.Logger
 import org.somersault.cloud.lib.utils.SCThreadManager
 import java.io.BufferedReader
@@ -81,7 +82,7 @@ object LogcatManager {
         }
         STARTED = true
         LOG_SWITCH = true
-        Thread(mRunnable).start()
+        SCThreadManager.runOnReadLogThread(mRunnable)
     }
 
     /**
@@ -140,8 +141,11 @@ object LogcatManager {
             try {
                 var process = ProcessBuilder("logcat","-v","threadtime").start()
                 reader = BufferedReader(InputStreamReader(process.inputStream))
-                var line : String ? = null
-                while ((reader.readLine().also { line = it }) != null){
+                while (true){
+                    var line = reader.readLine()
+                    if(line.isNullOrEmpty()){
+                        continue
+                    }
                     if(isNeedStop){
                         Logger.d(LogcatManager::class.java.name,"Thread had stoped!")
                         if(mThreadStatusCallback!=null){
@@ -174,10 +178,11 @@ object LogcatManager {
             }catch (e:IOException){
                 e.printStackTrace()
                 pause()
+                SCThreadManager.runOnUIThread { Toast.makeText(ApplicationUtils.getInstance().application,"log exception",Toast.LENGTH_SHORT).show()}
             }finally {
                 //执行到这里说明，任务执行完毕，要将isNeedStop标志位恢复false
                 isNeedStop = false
-                Logger.d(LogcatManager::class.java.name,"Thread exit")
+                SCThreadManager.runOnUIThread { Toast.makeText(ApplicationUtils.getInstance().application,"thread exit",Toast.LENGTH_SHORT).show()}
                 if(reader!=null){
                     try{
                         reader.close()

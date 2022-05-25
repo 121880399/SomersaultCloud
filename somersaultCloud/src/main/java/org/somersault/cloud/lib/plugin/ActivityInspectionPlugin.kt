@@ -42,12 +42,12 @@ class ActivityInspectionPlugin : IFunctionPlugin{
     override fun onClick() {
         val currentActivity = ActivityManager.instance.getTopActivity()!!
         if(isOpen){
-            Toast.makeText(currentActivity,"页面检测关闭!",Toast.LENGTH_LONG).show()
+            Toast.makeText(currentActivity,"页面检测关闭!", Toast.LENGTH_SHORT).show()
             FloatViewManager.instance.detach(ActivityInspectionView::class.java)
             view = null
             isOpen = false
         }else{
-            Toast.makeText(currentActivity,"页面检测打开!",Toast.LENGTH_LONG).show()
+            Toast.makeText(currentActivity,"页面检测打开!", Toast.LENGTH_SHORT).show()
             HandlerHooker.doHook()
             view = ActivityInspectionView()
             view!!.init(currentActivity)

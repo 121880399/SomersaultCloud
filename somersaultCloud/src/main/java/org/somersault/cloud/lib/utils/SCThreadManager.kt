@@ -28,6 +28,13 @@ object SCThreadManager {
     */
     private var mSaveLogSingleThreadExecutor : ThreadPoolExecutor ? = null
 
+    /**
+    * 读取日志专用单线程池
+    * 作者: ZhouZhengyi
+    * 创建时间: 2022/5/25 7:49
+    */
+    private var mReadLogSingleThreadExecutor : ThreadPoolExecutor ? = null
+
     private var mMainThreadHandler : Handler ? = null
 
     init {
@@ -35,6 +42,12 @@ object SCThreadManager {
             ,TimeUnit.SECONDS,LinkedBlockingQueue(), ThreadFactory {
                 val thread = Thread(it)
                 thread.name = "Save_Log_Thread"
+                return@ThreadFactory thread
+            })
+        mReadLogSingleThreadExecutor = ThreadPoolExecutor(1,1,60L,
+            TimeUnit.SECONDS,LinkedBlockingQueue(), ThreadFactory {
+                val thread = Thread(it)
+                thread.name = "Read_Log_Thread"
                 return@ThreadFactory thread
             })
         mMainThreadHandler = Handler(Looper.getMainLooper())
@@ -57,5 +70,14 @@ object SCThreadManager {
     */
     fun runOnUIThread(runnable : Runnable){
         mMainThreadHandler!!.post(runnable)
+    }
+
+    /**
+    * 在读取日志线程中运行
+    * 作者: ZhouZhengyi
+    * 创建时间: 2022/5/25 7:52
+    */
+    fun runOnReadLogThread(runnable: Runnable){
+        mReadLogSingleThreadExecutor!!.execute(runnable)
     }
 }

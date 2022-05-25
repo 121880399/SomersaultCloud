@@ -3,6 +3,7 @@ package org.somersault.cloud.lib.core.log
 import android.annotation.SuppressLint
 import android.content.Context
 import android.text.TextUtils
+import android.widget.Toast
 import org.somersault.cloud.lib.R
 
 /**
@@ -36,14 +37,14 @@ object LogDataManager {
      * 作者: ZhouZhengyi
      * 创建时间: 2022/5/1 10:00
      */
-    private var mLogcatData : ArrayList<LogcatInfo>  =  ArrayList()
+    @Volatile private var mLogcatData : ArrayList<LogcatInfo>  =  ArrayList()
 
     /**
      * 当前显示的数据
      * 作者: ZhouZhengyi
      * 创建时间: 2022/5/1 10:05
      */
-    private var mShowData : ArrayList<LogcatInfo>  =  ArrayList()
+    @Volatile private var mShowData : ArrayList<LogcatInfo>  =  ArrayList()
 
     /**
      * 标记是否正在进行清除操作，如果正在清除，则不添加数据
@@ -167,7 +168,7 @@ object LogDataManager {
     fun isConform(info:LogcatInfo):Boolean{
         return (TextUtils.isEmpty(mKeyWord) || info.content!!.contains(mKeyWord))
                 &&
-                (TextUtils.equals(mContext!!.resources.getStringArray(R.array.logcat_level)[0],mLogLevel)
+                (TextUtils.equals(LogcatInfo.VERBOSE_LEVEL,mLogLevel)
                         || TextUtils.equals(info.level,mLogLevel))
     }
 
@@ -203,7 +204,7 @@ object LogDataManager {
         }
         //如果没有任何过滤，包括关键字和日志等级
         if(TextUtils.isEmpty(mKeyWord)
-            && TextUtils.equals(mContext!!.resources.getStringArray(R.array.logcat_level)[0],mLogLevel)){
+            && TextUtils.equals(LogcatInfo.VERBOSE_LEVEL,mLogLevel)){
             mShowData = mLogcatData
             return
         }

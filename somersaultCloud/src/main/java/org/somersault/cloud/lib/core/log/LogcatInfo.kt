@@ -69,7 +69,31 @@ class LogcatInfo private constructor(){
 
         val LINE_SPACE = "\n"+ SPACE
 
+        val VERBOSE_LEVEL = "V"
+
+        val DEBUG_LEVEL = "D"
+
+        val INFO_LEVEL = "I"
+
+        val WARNING_LEVEL = "W"
+
+        val ERROR_LEVEL = "E"
+
+        val ASSERT_LEVEL = "A"
+
         private val PATTERN : Pattern = Pattern.compile("([0-9^-]+-[0-9^ ]+\\s[0-9^:]+:[0-9^:]+\\.[0-9]+)\\s+([0-9]+)\\s+([0-9]+)\\s([VDIWEF])\\s([^\\s]*)\\s*:\\s(.*)")
+
+        fun getLevel(position : Int):String{
+            return when(position){
+                0 -> VERBOSE_LEVEL
+                1 -> DEBUG_LEVEL
+                2 -> INFO_LEVEL
+                3 -> WARNING_LEVEL
+                4 -> ERROR_LEVEL
+                5 -> ASSERT_LEVEL
+                else -> VERBOSE_LEVEL
+            }
+        }
 
         fun getLocatInfo(line :String):LogcatInfo?{
             var matcher = PATTERN.matcher(line)

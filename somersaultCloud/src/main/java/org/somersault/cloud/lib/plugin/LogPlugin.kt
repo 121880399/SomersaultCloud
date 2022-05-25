@@ -42,12 +42,12 @@ class LogPlugin : IFunctionPlugin {
     override fun onClick() {
         val currentActivity = ActivityManager.instance.getTopActivity()
         if(isOpen){
-            Toast.makeText(currentActivity,"Logcat关闭!", Toast.LENGTH_LONG).show()
+            Toast.makeText(currentActivity,"Logcat关闭!", Toast.LENGTH_SHORT).show()
             FloatViewManager.instance.detach(LogView::class.java)
             view = null
             isOpen = false
         }else{
-            Toast.makeText(currentActivity,"Logcat开启!", Toast.LENGTH_LONG).show()
+            Toast.makeText(currentActivity,"Logcat开启!", Toast.LENGTH_SHORT).show()
             view = LogView()
             view!!.init(currentActivity!!)
             FloatViewManager.instance.attach(view!!,currentActivity)
