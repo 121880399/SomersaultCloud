@@ -153,7 +153,7 @@ class LogcatActivity : BaseActivity() {
                     Toast.makeText(this@LogcatActivity,R.string.sc_create_log_file_failed,Toast.LENGTH_SHORT).show()
                 }else{
                     val shareIntent = Intent(Intent.ACTION_SEND)
-                    shareIntent.type = "text/plain"
+                    shareIntent.type = "*/*"
                     val uri = FileProvider.getUriForFile(applicationContext, "$packageName.logcat_fileprovider",file!!)
                     shareIntent.putExtra(Intent.EXTRA_STREAM,uri)
                     if(packageManager.queryIntentActivities(shareIntent,0).isEmpty()){
