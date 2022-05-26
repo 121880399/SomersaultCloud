@@ -15,27 +15,30 @@
             android:layout_width="15dp"
             android:layout_height="15dp"
             android:src="@mipmap/sc_ic_extension"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="8dp"
+            android:layout_weight="1"
             />
         <Spinner
             android:id="@+id/spinner_level"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="30dp"
-            android:layout_weight="1"
             android:layout_marginStart="8dp"
+            android:layout_weight="1"
             />
         <ImageView
             android:id="@+id/iv_log_switch"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:src="@mipmap/sc_ic_start_log"
+            android:layout_weight="1"
+            android:src="@mipmap/sc_ic_stop_log"
             android:layout_marginTop="8dp"
             />
         <ImageView
             android:id="@+id/iv_clear_log"
             android:layout_width="20dp"
             android:layout_height="20dp"
+            android:layout_weight="1"
             android:src="@mipmap/sc_ic_clear_log"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
@@ -44,10 +47,11 @@
             android:id="@+id/iv_close"
             android:layout_width="20dp"
             android:layout_height="20dp"
+            android:layout_weight="1"
             android:src="@drawable/sc_ic_close"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="20dp"
             />
     </LinearLayout>
     <androidx.recyclerview.widget.RecyclerView

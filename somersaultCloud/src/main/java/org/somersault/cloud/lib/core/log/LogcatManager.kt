@@ -19,7 +19,7 @@ import java.lang.Exception
  */
 object LogcatManager {
 
-    @Volatile private var LOG_SWITCH = false
+    @Volatile private var LOG_SWITCH = true
 
     /**
     * 是否已经开启日志输出，不允许重复开启

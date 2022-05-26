@@ -10,12 +10,12 @@
         android:layout_height="wrap_content"
         android:padding="8dp"
         >
+
         <ImageView
             android:id="@+id/iv_extension"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:src="@mipmap/sc_ic_extension"
-            />
+            android:src="@mipmap/sc_ic_extension" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -86,16 +86,18 @@
         >
         <Spinner
             android:id="@+id/spinner_level"
-            android:layout_width="0dp"
-            android:layout_height="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
             android:layout_weight="1"
             />
         <ImageView
             android:id="@+id/iv_log_switch"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:src="@mipmap/sc_ic_start_log"
+            android:src="@mipmap/sc_ic_stop_log"
             android:layout_marginStart="8dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
             />
         <ImageView
             android:id="@+id/iv_clear_log"
@@ -103,6 +105,8 @@
             android:layout_height="20dp"
             android:src="@mipmap/sc_ic_clear_log"
             android:layout_marginStart="8dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
             />
         <ImageView
             android:id="@+id/iv_share_log"
@@ -110,6 +114,8 @@
             android:layout_height="20dp"
             android:src="@mipmap/sc_ic_share"
             android:layout_marginStart="8dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
             />
         <ImageView
             android:id="@+id/iv_export_log"
@@ -118,6 +124,8 @@
             android:src="@mipmap/sc_ic_export"
             android:layout_marginStart="8dp"
             android:visibility="gone"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
             />
     </LinearLayout>
     <LinearLayout

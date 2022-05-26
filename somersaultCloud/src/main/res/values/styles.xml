@@ -2,6 +2,11 @@
 <resources>
     <style name="SC"/>
 
+    <style name="SCTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
     <style name="SC.Shadow">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">8dp</item>

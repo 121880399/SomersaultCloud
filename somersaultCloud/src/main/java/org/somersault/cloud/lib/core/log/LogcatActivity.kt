@@ -21,6 +21,7 @@ import kotlinx.coroutines.*
 import org.somersault.cloud.lib.R
 import org.somersault.cloud.lib.core.base.BaseActivity
 import org.somersault.cloud.lib.databinding.ScActivityLogcatBinding
+import org.somersault.cloud.lib.manager.FloatViewManager
 import org.somersault.cloud.lib.plugin.LogPlugin
 import org.somersault.cloud.lib.utils.DateUtils
 import org.somersault.cloud.lib.utils.FileUtils
@@ -71,8 +72,12 @@ class LogcatActivity : BaseActivity() {
         mLogcatAdapter = LogcatAdapter(this,LogDataManager.getShowLogData())
         mBinding!!.rvLog.layoutManager = LinearLayoutManager(this)
         mBinding!!.rvLog.adapter = mLogcatAdapter
-        mBinding!!.ivLogSwitch.setOnClickListener {
+        mBinding!!.ivExtension.setOnClickListener {
             //切换回悬浮窗
+            val view = LogView()
+            view!!.init(this@LogcatActivity)
+            FloatViewManager.instance.attach(view,this@LogcatActivity)
+            finish()
         }
         mBinding!!.ivClose.setOnClickListener {
             //退出日志功能,先停止日志采集，再清空数据
@@ -232,8 +237,13 @@ class LogcatActivity : BaseActivity() {
             return null
         }
         val externalFilesDir = getExternalFilesDir(null) ?: return null
+        val files = "$externalFilesDir/sc_logs"
+        val dir = File(files)
+        if(!dir.exists()){
+            dir.mkdirs()
+        }
         val allData = LogDataManager.getAllLogData() ?: return null
-        val logFile = File(externalFilesDir,DateUtils.DATE_FORMAT.format(Date()) + ".txt")
+        val logFile = File(files,DateUtils.DATE_FORMAT.format(Date()) + ".txt")
         if(logFile.exists()){
             if(!logFile.delete()){
                 return null
