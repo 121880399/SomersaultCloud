@@ -35,7 +35,7 @@ class UIPageView : IPageView{
     }
 
     private fun onViewCreate(view : View){
-        mPlugins = SomersaultCloud.instance.getUIPlugins()
+        mPlugins = SomersaultCloud.getUIPlugins()
         mBinding!!.tvTitle.text = "UI工具"
         if(mPlugins == null || mPlugins!!.isEmpty()){
             // TODO: 2021/6/20 显示空页面

@@ -43,8 +43,15 @@ class LogView :BaseFloatView(){
 
     override fun onViewCreated(floatView: View) {
         LogDataManager.init(floatView.context)
+        if(LogcatManager.getLogSwitchStatus()){
+            mBinding!!.ivLogSwitch!!.setImageResource(R.mipmap.sc_ic_stop_log)
+        }else{
+            mBinding!!.ivLogSwitch!!.setImageResource(R.mipmap.sc_ic_start_log)
+        }
         mAdapter = LogcatAdapter(floatView.context,LogDataManager.getShowLogData())
-        mBinding!!.rvLog.layoutManager = LinearLayoutManager(floatView.context)
+        val linearLayoutManager = LinearLayoutManager(floatView.context)
+        linearLayoutManager.stackFromEnd = true
+        mBinding!!.rvLog.layoutManager = linearLayoutManager
         mBinding!!.rvLog.adapter = mAdapter
         //R.array.logcat_level 只用于在界面上显示，不要用于数据处理和判断，数据处理使用LogcatInfo中定义的等级
         var logLevelAdapter = ArrayAdapter.createFromResource(floatView.context,
@@ -94,6 +101,9 @@ class LogView :BaseFloatView(){
                 //添加日志
                 LogDataManager.addItem(info)
                 mAdapter!!.setData(LogDataManager.getShowLogData())
+                if (!mBinding!!.rvLog.canScrollVertically(1)) {
+                    mBinding!!.rvLog.scrollToPosition(mAdapter!!.itemCount - 1)
+                }
             }
         })
     }

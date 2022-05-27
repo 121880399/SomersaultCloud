@@ -8,6 +8,7 @@ import org.somersault.cloud.lib.interf.IFunctionPlugin
 import org.somersault.cloud.lib.manager.FloatViewManager
 import org.somersault.cloud.lib.plugin.ActivityInspectionPlugin
 import org.somersault.cloud.lib.core.Cloud
+import org.somersault.cloud.lib.core.log.LogcatManager
 import org.somersault.cloud.lib.utils.ApplicationUtils
 import org.somersault.cloud.lib.manager.ActivityManager
 import org.somersault.cloud.lib.manager.OperationPathManager
@@ -22,15 +23,8 @@ import org.somersault.cloud.lib.plugin.SlowMethodPlugin
  * 修订历史：
  * ================================================
  */
-class SomersaultCloud private constructor(){
+object SomersaultCloud{
 
-    companion object{
-        val instance = Holder.holder
-    }
-
-    private object Holder{
-        val holder = SomersaultCloud()
-    }
 
     private val performanceList : ArrayList<IFunctionPlugin> = ArrayList()
 
@@ -75,6 +69,16 @@ class SomersaultCloud private constructor(){
         return AppInfoList
     }
 
+    /**
+    * 添加Log Tag信息的提示
+     * 用于给业务层提前配置一些TAG信息
+    * 作者: ZhouZhengyi
+    * 创建时间: 2022/5/27 8:06
+    */
+    fun addLogTagTipConfig(map:Map<String,String>){
+        LogcatManager.mLogTagTip = map
+    }
+    
     /**
      * 显示筋斗云
      * 作者:ZhouZhengyi

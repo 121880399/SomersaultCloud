@@ -1,6 +1,7 @@
 package org.somersault.cloud
 
 import android.app.Application
+import android.util.ArrayMap
 import org.somersault.cloud.lib.SomersaultCloud
 
 /**
@@ -15,6 +16,10 @@ class App :Application() {
 
     override fun onCreate() {
         super.onCreate()
-        SomersaultCloud.instance.init(this)
+        SomersaultCloud.init(this)
+        val map = ArrayMap<String,String>()
+        map["Activity"] = "查看Activity日志输出"
+        map["View"] = "查看View的信息"
+        SomersaultCloud.addLogTagTipConfig(map)
     }
 }

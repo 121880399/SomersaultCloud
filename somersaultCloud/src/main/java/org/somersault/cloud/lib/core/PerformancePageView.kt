@@ -36,7 +36,7 @@ class PerformancePageView : IPageView{
     }
 
     private fun onViewCreate(view : View){
-        mPlugins = SomersaultCloud.instance.getPerformancePlugins()
+        mPlugins = SomersaultCloud.getPerformancePlugins()
         if(mPlugins == null || mPlugins!!.isEmpty()){
             // TODO: 2021/6/20 显示空页面
             return

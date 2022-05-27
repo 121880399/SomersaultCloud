@@ -56,6 +56,13 @@ object LogcatManager {
     var mThreadStatusCallback  : ThreadStatus ? = null
 
     /**
+    * Log Tag 提示，给业务层进行预埋
+    * 作者: ZhouZhengyi
+    * 创建时间: 2022/5/27 8:11
+    */
+    var mLogTagTip : Map<String,String> ? = null
+
+    /**
     * 切换捕获日志的状态
     * 作者: ZhouZhengyi
     * 创建时间: 2022/5/3 12:06
@@ -178,11 +185,9 @@ object LogcatManager {
             }catch (e:IOException){
                 e.printStackTrace()
                 pause()
-                SCThreadManager.runOnUIThread { Toast.makeText(ApplicationUtils.getInstance().application,"log exception",Toast.LENGTH_SHORT).show()}
             }finally {
                 //执行到这里说明，任务执行完毕，要将isNeedStop标志位恢复false
                 isNeedStop = false
-                SCThreadManager.runOnUIThread { Toast.makeText(ApplicationUtils.getInstance().application,"thread exit",Toast.LENGTH_SHORT).show()}
                 if(reader!=null){
                     try{
                         reader.close()

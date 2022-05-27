@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
+import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +15,6 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
-import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.*
@@ -29,7 +29,6 @@ import org.somersault.cloud.lib.utils.SCThreadManager
 import java.io.*
 import java.lang.Runnable
 import java.util.*
-import kotlin.collections.ArrayList
 
 /**
  * ================================================
@@ -65,12 +64,63 @@ class LogcatActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         mBinding = ScActivityLogcatBinding.inflate(LayoutInflater.from(this))
         setContentView(mBinding!!.root)
+        initView()
         initData()
+    }
+
+    private fun initView(){
+        if(LogcatManager.getLogSwitchStatus()){
+            mBinding!!.ivLogSwitch!!.setImageResource(R.mipmap.sc_ic_stop_log)
+        }else{
+            mBinding!!.ivLogSwitch!!.setImageResource(R.mipmap.sc_ic_start_log)
+        }
+        mBinding!!.logFilter.setText(LogDataManager.getKeyWord() ?: "")
+        if(!LogcatManager.mLogTagTip!!.isNullOrEmpty()){
+            mBinding!!.spinnerPresetTag.visibility = View.VISIBLE
+            val logTagArray = ArrayList<String>()
+            val logTagKeyArray = ArrayList<String>()
+            LogcatManager.mLogTagTip!!.forEach {
+                logTagArray.add(it.key + "-"+it.value)
+                logTagKeyArray.add(it.key)
+            }
+            //这里在添加完数据以后，列表最前面添加两个空值，有两个目的
+            //1.spinner这个控件会默认选择第一个值，这样一进该页面，就会选中第一个关键词进行过滤
+            //2.如果不设置为空值，就必须选择一个预设的关键词，没办法不选
+            logTagArray.add(0,"")
+            logTagKeyArray.add(0,"")
+            val logTagAdapter = ArrayAdapter(this,R.layout.sc_item_logcat_level,logTagArray)
+            mBinding!!.spinnerPresetTag.adapter = logTagAdapter
+            mBinding!!.spinnerPresetTag.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                    this@LogcatActivity.mBinding!!.logFilter.setText(logTagKeyArray[position])
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                    TODO("Not yet implemented")
+                }
+            }
+            //用于解决从悬浮窗回来以后，关键字还原
+            if(!LogDataManager.getKeyWord().isNullOrEmpty()){
+                var positon = -1
+                logTagKeyArray.forEachIndexed { index, value ->
+                    if(TextUtils.equals(value,LogDataManager.getKeyWord())){
+                        positon = index
+                    }
+                }
+                if(positon!=-1){
+                    mBinding!!.spinnerPresetTag.setSelection(positon)
+                }
+            }
+        }else{
+            mBinding!!.spinnerPresetTag.visibility = View.GONE
+        }
     }
 
     private fun initData(){
         mLogcatAdapter = LogcatAdapter(this,LogDataManager.getShowLogData())
-        mBinding!!.rvLog.layoutManager = LinearLayoutManager(this)
+        val linearLayoutManager = LinearLayoutManager(this)
+        linearLayoutManager.stackFromEnd = true
+        mBinding!!.rvLog.layoutManager = linearLayoutManager
         mBinding!!.rvLog.adapter = mLogcatAdapter
         mBinding!!.ivExtension.setOnClickListener {
             //切换回悬浮窗
@@ -210,6 +260,9 @@ class LogcatActivity : BaseActivity() {
                 //添加日志
                 LogDataManager.addItem(info)
                 mLogcatAdapter!!.notifyDataSetChanged()
+                if (!mBinding!!.rvLog.canScrollVertically(1)) {
+                    mBinding!!.rvLog.scrollToPosition(mLogcatAdapter!!.itemCount - 1)
+                }
             }
         })
     }
@@ -281,6 +334,7 @@ class LogcatActivity : BaseActivity() {
     private val mSearchRunnable = Runnable {
         var keyword = mBinding!!.logFilter!!.text.toString()
         LogDataManager.setKeyWord(keyword)
+        mLogcatAdapter!!.setData(LogDataManager.getShowLogData())
         mLogcatAdapter!!.notifyDataSetChanged()
         mBinding!!.rvLog!!.layoutManager!!.scrollToPosition(mLogcatAdapter!!.itemCount-1)
         if(keyword.isNotEmpty()){

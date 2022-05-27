@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity() {
         mBinding = ActivityMainBinding.inflate(LayoutInflater.from(this))
         setContentView(mBinding!!.root)
         mBinding?.btnFloat?.setOnClickListener {
-            SomersaultCloud.instance.show(this)
+            SomersaultCloud.show(this)
         }
         mBinding?.btnJump?.setOnClickListener {
             val intent = Intent(

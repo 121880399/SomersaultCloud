@@ -36,7 +36,7 @@ class AppInfoPageView : IPageView {
     }
 
     private fun onViewCreate(view : View){
-        mPlugins = SomersaultCloud.instance.getAppInfoPlugins()
+        mPlugins = SomersaultCloud.getAppInfoPlugins()
         mBinding!!.tvTitle.text = "App信息"
         if(mPlugins == null || mPlugins!!.isEmpty()){
             // TODO: 2021/6/20 显示空页面
