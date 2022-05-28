@@ -122,6 +122,6 @@ class LogView :BaseFloatView(){
         params.width = ScreenUtils.dp2px(300F).toInt()
         params.height = ScreenUtils.dp2px(400F).toInt()
         params.x = ScreenUtils.dp2px(30F).toInt()
-        params.y = ScreenUtils.dp2px(30F).toInt()
+        params.y = ScreenUtils.dp2px(20F).toInt()
     }
 }

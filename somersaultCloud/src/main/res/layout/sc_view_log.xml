@@ -11,13 +11,22 @@
         android:orientation="horizontal"
         >
         <ImageView
-            android:id="@+id/iv_extension"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
-            android:src="@mipmap/sc_ic_extension"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="8dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:layout_weight="1"
+            android:src="@mipmap/sc_ic_move"
+            android:layout_marginTop="6dp"
+            android:layout_marginStart="20dp"
+            />
+        <ImageView
+            android:id="@+id/iv_extension"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@mipmap/sc_ic_extension"
+            android:layout_marginTop="6dp"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:scaleType="centerInside"
             />
         <Spinner
             android:id="@+id/spinner_level"
@@ -32,7 +41,7 @@
             android:layout_height="20dp"
             android:layout_weight="1"
             android:src="@mipmap/sc_ic_stop_log"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="6dp"
             />
         <ImageView
             android:id="@+id/iv_clear_log"
@@ -41,7 +50,7 @@
             android:layout_weight="1"
             android:src="@mipmap/sc_ic_clear_log"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="6dp"
             />
         <ImageView
             android:id="@+id/iv_close"
@@ -50,7 +59,7 @@
             android:layout_weight="1"
             android:src="@drawable/sc_ic_close"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="6dp"
             android:layout_marginEnd="20dp"
             />
     </LinearLayout>

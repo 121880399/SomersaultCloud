@@ -208,14 +208,14 @@ abstract class BaseFloatView : IFloatView, OnTouchEventListener {
 //        //如果当前悬浮窗在Activity上有位置信息，则使用，否则使用用户自定义的
 //        if (floatViewCurrentPosition != null) {
 //            if (floatViewCurrentPosition.orientation == Configuration.ORIENTATION_PORTRAIT) {
-//                params.leftMargin = floatViewCurrentPosition.portraitPoint.x
+//                params.marginStart = floatViewCurrentPosition.portraitPoint.x
 //                params.topMargin = floatViewCurrentPosition.portraitPoint.y
 //            } else if (floatViewCurrentPosition.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-//                params.leftMargin = floatViewCurrentPosition.landscapePoint.x
+//                params.marginStart = floatViewCurrentPosition.landscapePoint.x
 //                params.topMargin = floatViewCurrentPosition.landscapePoint.y
 //            }
 //        } else {
-//            params.leftMargin = mCustomLayoutParams!!.x
+//            params.marginStart = mCustomLayoutParams!!.x
 //            params.topMargin = mCustomLayoutParams!!.y
 //        }
         portraitOrLandscape(params)
@@ -229,21 +229,21 @@ abstract class BaseFloatView : IFloatView, OnTouchEventListener {
             if (ScreenUtils.isPortrait()) {
                 if (mLastPositionInfo!!.isPortrait) {
                     //如果上一次也是竖屏，那么直接使用当前位置信息
-                    params.leftMargin = floatViewCurrentPosition.portraitPoint.x
+                    params.marginStart = floatViewCurrentPosition.portraitPoint.x
                     params.topMargin = floatViewCurrentPosition.portraitPoint.y
                 } else {
                     //如果上一次是横屏，那么就要根据比例计算
-                    params.leftMargin =
-                        ((floatViewCurrentPosition.landscapePoint.x * mLastPositionInfo!!.leftMarginPercent).toInt())
+                    params.marginStart =
+                        ((floatViewCurrentPosition.landscapePoint.x * mLastPositionInfo!!.startMarginPercent).toInt())
                     params.topMargin = (floatViewCurrentPosition.landscapePoint.y * mLastPositionInfo!!.topMarginPercent).toInt()
                 }
             } else {
                 //如果当前是横屏,上一次是竖屏
                 if (mLastPositionInfo!!.isPortrait) {
-                    params.leftMargin = (floatViewCurrentPosition.portraitPoint.x * mLastPositionInfo!!.leftMarginPercent).toInt()
+                    params.marginStart = (floatViewCurrentPosition.portraitPoint.x * mLastPositionInfo!!.startMarginPercent).toInt()
                     params.topMargin = (floatViewCurrentPosition.portraitPoint.y * mLastPositionInfo!!.topMarginPercent).toInt()
                 } else {
-                    params.leftMargin = floatViewCurrentPosition.landscapePoint.x
+                    params.marginStart = floatViewCurrentPosition.landscapePoint.x
                     params.topMargin = floatViewCurrentPosition.landscapePoint.y
                 }
             }
@@ -253,30 +253,30 @@ abstract class BaseFloatView : IFloatView, OnTouchEventListener {
             if (ScreenUtils.isPortrait()) {
                 if (mLastPositionInfo!!.isPortrait) {
                     //如果上一次也是竖屏
-                    params.leftMargin = mCustomLayoutParams!!.x
+                    params.marginStart = mCustomLayoutParams!!.x
                     params.topMargin = mCustomLayoutParams!!.y
                 } else {
                     //如果上一次是横屏，那么就要根据比例计算
-                    params.leftMargin =
-                        ((mCustomLayoutParams!!.x * mLastPositionInfo!!.leftMarginPercent).toInt())
+                    params.marginStart =
+                        ((mCustomLayoutParams!!.x * mLastPositionInfo!!.startMarginPercent).toInt())
                     params.topMargin = (mCustomLayoutParams!!.y * mLastPositionInfo!!.topMarginPercent).toInt()
                 }
             } else {
                 //如果当前是横屏,上一次是竖屏
                 if (mLastPositionInfo!!.isPortrait) {
-                    params.leftMargin = (mCustomLayoutParams!!.x * mLastPositionInfo!!.leftMarginPercent).toInt()
+                    params.marginStart = (mCustomLayoutParams!!.x * mLastPositionInfo!!.startMarginPercent).toInt()
                     params.topMargin = (mCustomLayoutParams!!.y * mLastPositionInfo!!.topMarginPercent).toInt()
                 } else {
-                    params.leftMargin = mCustomLayoutParams!!.x
+                    params.marginStart = mCustomLayoutParams!!.x
                     params.topMargin = mCustomLayoutParams!!.y
                 }
             }
         }
         mLastPositionInfo?.setPortrait()
-        mLastPositionInfo?.setLeftMargin(params.leftMargin)
+        mLastPositionInfo?.setStartMargin(params.marginStart)
         mLastPositionInfo?.setTopMargin(params.topMargin)
 
-        FloatViewManager.instance.saveCurrentPosition(mTag,params.leftMargin,params.topMargin)
+        FloatViewManager.instance.saveCurrentPosition(mTag,params.marginStart,params.topMargin)
         mFloatView?.layoutParams = params
     }
 
@@ -284,7 +284,7 @@ abstract class BaseFloatView : IFloatView, OnTouchEventListener {
         if(!canDrag()){
             return
         }
-        mLayoutParams!!.leftMargin += dx
+        mLayoutParams!!.marginStart += dx
         mLayoutParams!!.topMargin += dy
         updateViewLayout(mTag)
     }
@@ -294,7 +294,7 @@ abstract class BaseFloatView : IFloatView, OnTouchEventListener {
             return
         }
         //手指抬起时保存当前悬浮窗位置
-        FloatViewManager.instance.saveCurrentPosition(mTag,mLayoutParams!!.leftMargin,mLayoutParams!!.topMargin)
+        FloatViewManager.instance.saveCurrentPosition(mTag,mLayoutParams!!.marginStart,mLayoutParams!!.topMargin)
     }
 
     override fun onDown(x: Int, y: Int) {
@@ -309,7 +309,7 @@ abstract class BaseFloatView : IFloatView, OnTouchEventListener {
         }
         //更新位置前先保存当前信息
         mLastPositionInfo?.setPortrait()
-        mLastPositionInfo?.setLeftMargin(mLayoutParams!!.leftMargin)
+        mLastPositionInfo?.setStartMargin(mLayoutParams!!.marginStart)
         mLastPositionInfo?.setTopMargin(mLayoutParams!!.topMargin)
         mLayoutParams?.width = mFloatViewWidth
         mLayoutParams?.height = mFloatViewHeight
@@ -331,17 +331,17 @@ abstract class BaseFloatView : IFloatView, OnTouchEventListener {
             }
         }
 
-        if(mLayoutParams!!.leftMargin <= 0){
-            mLayoutParams?.leftMargin = 0
+        if(mLayoutParams!!.marginStart <= 0){
+            mLayoutParams?.marginStart = 0
         }
 
         if(ScreenUtils.isPortrait()){
-            if(mLayoutParams!!.leftMargin >= getScreenShortSideLength() - mFloatViewHeight){
-                mLayoutParams?.leftMargin = getScreenShortSideLength() - mFloatViewHeight
+            if(mLayoutParams!!.marginStart >= getScreenShortSideLength() - mFloatViewWidth){
+                mLayoutParams?.marginStart = getScreenShortSideLength() - mFloatViewWidth
             }
         }else{
-            if(mLayoutParams!!.leftMargin >= getScreenLongSideLength() - mFloatViewHeight){
-                mLayoutParams?.leftMargin = getScreenLongSideLength() - mFloatViewHeight
+            if(mLayoutParams!!.marginStart >= getScreenLongSideLength() - mFloatViewWidth){
+                mLayoutParams?.marginStart = getScreenLongSideLength() - mFloatViewWidth
             }
         }
     }

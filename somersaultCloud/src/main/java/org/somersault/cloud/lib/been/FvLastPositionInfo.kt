@@ -10,11 +10,11 @@ import org.somersault.cloud.lib.utils.ScreenUtils
  * 修订历史：
  * ================================================
  */
-class FvLastPositionInfo(var isPortrait :Boolean = true, var viewWidth : Int = 0, var viewHeight :Int = 0, var leftMarginPercent :Float = 0f, var topMarginPercent:Float = 0f){
+class FvLastPositionInfo(var isPortrait :Boolean = true, var viewWidth : Int = 0, var viewHeight :Int = 0, var startMarginPercent :Float = 0f, var topMarginPercent:Float = 0f){
 
 
-    fun setLeftMargin(leftMargin:Int){
-        this.leftMarginPercent = (leftMargin / ScreenUtils.getScreenWidth()).toFloat()
+    fun setStartMargin(startMargin:Int){
+        this.startMarginPercent = (startMargin / ScreenUtils.getScreenWidth()).toFloat()
     }
 
     fun setTopMargin(topMargin:Int){
