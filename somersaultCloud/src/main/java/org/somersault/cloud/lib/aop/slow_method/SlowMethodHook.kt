@@ -12,23 +12,21 @@ import java.util.concurrent.ConcurrentHashMap
  * ================================================
  * 作    者：ZhouZhengyi
  * 创建日期：2021/11/30 11:02
- * 描    述：
+ * 描    述：对方法Hook，判断是否超过阈值，超过即为慢方法
  * 修订历史：
  * ================================================
  */
-class SlowMethodHook {
-    companion object {
-        private const val TAG = "SLOW_METHOD"
-        private const val SPACE_0 = "********"
-        private const val SPACE_1 = "*************"
-        private const val SPACE_2 = "*****************"
-        private const val SPACE_3 = "*********************"
-        private const val SPACE_4 = "*************************"
-        private const val SPACE_5 = "*****************************"
-        private const val SPACE_6 = "*********************************"
-        private const val SPACE_7 = "*************************************"
-    }
+object SlowMethodHook {
 
+    private const val TAG = "SLOW_METHOD"
+    private const val SPACE_0 = "********"
+    private const val SPACE_1 = "*************"
+    private const val SPACE_2 = "*****************"
+    private const val SPACE_3 = "*********************"
+    private const val SPACE_4 = "*************************"
+    private const val SPACE_5 = "*****************************"
+    private const val SPACE_6 = "*********************************"
+    private const val SPACE_7 = "*************************************"
 
     private val methodStacks: MutableList<ConcurrentHashMap<String, MethodInvokeNode>> by lazy {
         Collections.synchronizedList(mutableListOf<ConcurrentHashMap<String, MethodInvokeNode>>())
@@ -39,9 +37,7 @@ class SlowMethodHook {
      * 构建方法对应的Node类
      * @param className 类名
      * @param methodName 方法名
-     * @param desc 方法描述
      * @param currentLevel 当前方法层级
-     * @param thresholdTime 耗时阈值
      * @param totalLevel 需要输出的方法总层级
      * 作者:ZhouZhengyi
      * 创建时间: 2021/11/30 11:51
@@ -218,5 +214,5 @@ class SlowMethodHook {
             else -> SPACE_0
         }
     }
-
 }
+
