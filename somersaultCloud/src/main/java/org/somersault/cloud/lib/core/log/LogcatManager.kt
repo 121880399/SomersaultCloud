@@ -1,9 +1,7 @@
 package org.somersault.cloud.lib.core.log
 
-import android.widget.Toast
-import org.somersault.cloud.lib.utils.ApplicationUtils
 import org.somersault.cloud.lib.utils.Logger
-import org.somersault.cloud.lib.utils.SCThreadManager
+import org.somersault.cloud.lib.manager.SCThreadManager
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStreamReader

@@ -3,18 +3,14 @@ package org.somersault.cloud.lib.core.log
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import org.somersault.cloud.lib.R
 import org.somersault.cloud.lib.core.BaseFloatView
 import org.somersault.cloud.lib.databinding.ScViewLogBinding
 import org.somersault.cloud.lib.manager.FloatViewManager
 import org.somersault.cloud.lib.plugin.LogPlugin
-import org.somersault.cloud.lib.utils.ApplicationUtils
-import org.somersault.cloud.lib.utils.SCThreadManager
 import org.somersault.cloud.lib.utils.ScreenUtils
 import org.somersault.cloud.lib.widget.CustomLayoutParams
 

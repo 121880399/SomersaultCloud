@@ -25,7 +25,7 @@ import org.somersault.cloud.lib.manager.FloatViewManager
 import org.somersault.cloud.lib.plugin.LogPlugin
 import org.somersault.cloud.lib.utils.DateUtils
 import org.somersault.cloud.lib.utils.FileUtils
-import org.somersault.cloud.lib.utils.SCThreadManager
+import org.somersault.cloud.lib.manager.SCThreadManager
 import java.io.*
 import java.lang.Runnable
 import java.util.*

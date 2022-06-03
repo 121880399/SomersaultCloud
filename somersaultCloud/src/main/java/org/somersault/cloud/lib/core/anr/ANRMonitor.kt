@@ -1,7 +1,11 @@
 package org.somersault.cloud.lib.core.anr
 
 import android.content.Context
+import android.os.Looper
+import android.os.SystemClock
+import android.util.Printer
 import org.somersault.cloud.lib.core.anr.sample.SampleManager
+import org.somersault.cloud.lib.manager.SCThreadManager
 
 /**
  * ================================================
@@ -11,7 +15,7 @@ import org.somersault.cloud.lib.core.anr.sample.SampleManager
  * 修订历史：
  * ================================================
  */
-object ANRMonitor {
+object ANRMonitor : Printer {
 
     private var mContext : Context? = null
 
@@ -73,6 +77,33 @@ object ANRMonitor {
     fun start(){
         if(isStart) return
         isStart = true
+        Looper.getMainLooper().setMessageLogging(this)
+        SCThreadManager.runOnANRMonitorThread(mANRRunnable)
 
+    }
+
+    private val mANRRunnable = Runnable {
+        /**
+         * 到这个时间消息没处理完，我们
+         * 就认为发生了ANR，
+         * 该时间 = 消息开始时间+配置的ANR间隔时间
+         * 作者:ZhouZhengyi
+         * 创建时间: 2022/6/3 17:22
+         */
+        var anrTime = 0L
+        run {
+            anrTime = SystemClock.elapsedRealtime() + mConfig!!.anrTime!!
+            while (isStart){
+                var now = SystemClock.elapsedRealtime()
+                if(now >= anrTime){
+                    //时间到了
+
+                }
+            }
+        }
+    }
+
+    override fun println(x: String?) {
+        TODO("Not yet implemented")
     }
 }

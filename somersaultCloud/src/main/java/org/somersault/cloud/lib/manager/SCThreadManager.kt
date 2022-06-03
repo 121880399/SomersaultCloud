@@ -1,8 +1,7 @@
-package org.somersault.cloud.lib.utils
+package org.somersault.cloud.lib.manager
 
 import android.os.Handler
 import android.os.Looper
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asCoroutineDispatcher
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.ThreadFactory
@@ -35,6 +34,13 @@ object SCThreadManager {
     */
     private var mReadLogSingleThreadExecutor : ThreadPoolExecutor ? = null
 
+    /**
+     * ANR监控专用单线程池
+     * 作者:ZhouZhengyi
+     * 创建时间: 2022/6/3 17:37
+     */
+    private var mANRMonitorSingleThreadExecutor : ThreadPoolExecutor ? = null
+
     private var mMainThreadHandler : Handler ? = null
 
     init {
@@ -48,6 +54,12 @@ object SCThreadManager {
             TimeUnit.SECONDS,LinkedBlockingQueue(), ThreadFactory {
                 val thread = Thread(it)
                 thread.name = "Read_Log_Thread"
+                return@ThreadFactory thread
+            })
+        mANRMonitorSingleThreadExecutor = ThreadPoolExecutor(1,1,60L,
+            TimeUnit.SECONDS,LinkedBlockingQueue(), ThreadFactory {
+                val thread = Thread(it)
+                thread.name = "ANR_Monitor_Thread"
                 return@ThreadFactory thread
             })
         mMainThreadHandler = Handler(Looper.getMainLooper())
@@ -79,5 +91,14 @@ object SCThreadManager {
     */
     fun runOnReadLogThread(runnable: Runnable){
         mReadLogSingleThreadExecutor!!.execute(runnable)
+    }
+
+    /**
+     * 在ANR监控线程中运行
+     * 作者:ZhouZhengyi
+     * 创建时间: 2022/6/3 17:38
+     */
+    fun runOnANRMonitorThread(runnable: Runnable){
+        mANRMonitorSingleThreadExecutor!!.execute(runnable)
     }
 }
