@@ -15,4 +15,4 @@ import java.io.Serializable
  * 修订历史：
  * ================================================
  */
-data class MonitorMessage(val handlerName:String,val handlerAddress : String,val callBackName:String,val messageWhat : Int ,var msgId : Int = 0) : Serializable
+data class MonitorMessage(val handlerName:String,val handlerAddress : String,val callBackName:String,val messageWhat : Int ,var msgId : Long = 0L) : Serializable

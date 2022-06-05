@@ -1,5 +1,6 @@
 package org.somersault.cloud.lib.core.anr
 
+import android.text.TextUtils
 import org.somersault.cloud.lib.core.anr.bean.MonitorMessage
 import java.util.regex.Pattern
 
@@ -15,6 +16,12 @@ import java.util.regex.Pattern
 class MessageParser {
 
     companion object {
+
+         const val FRAME_HANDLER  = "android.view.Choreographer\$FrameHandler"
+
+         const val FRAME_INVOKE  = "android.view.Choreographer\$FrameDisplayEventReceiver"
+
+         const val ACTIVITY_THREAD_HANDLER  = "android.app.ActivityThread\$H"
 
         /**
          * 用来匹配handler的名称
@@ -76,5 +83,17 @@ class MessageParser {
                 return MonitorMessage("", "", "", 0)
             }
         }
+
+        fun isDoFrame(msg : MonitorMessage) : Boolean {
+            return msg != null && TextUtils.equals(FRAME_HANDLER,msg.handlerName) && msg.callBackName.contains(FRAME_INVOKE)
+        }
+
+        fun isActivityThreadMsg(msg:MonitorMessage) : Boolean {
+            return msg != null && TextUtils.equals(ACTIVITY_THREAD_HANDLER,msg.handlerName)
+        }
+
+
     }
+
+
 }

@@ -40,7 +40,14 @@ class ANRConfig (
      * 作者:ZhouZhengyi
      * 创建时间: 2022/6/3 15:29
      */
-    val idleTime : Int = 50
+    val idleTime : Int = 50,
 
-
+    /**
+     * 执行完三大流程后的耗时
+     * 如果超过这个帧数，就判定为
+     * jank
+     * 作者:ZhouZhengyi
+     * 创建时间: 2022/6/5 18:52
+     */
+    val jankFrame : Int = 30
 )
