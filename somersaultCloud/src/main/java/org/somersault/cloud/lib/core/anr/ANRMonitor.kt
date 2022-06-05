@@ -4,8 +4,10 @@ import android.content.Context
 import android.os.Looper
 import android.os.SystemClock
 import android.util.Printer
+import org.somersault.cloud.lib.core.anr.bean.MonitorMessage
 import org.somersault.cloud.lib.core.anr.sample.SampleManager
 import org.somersault.cloud.lib.manager.SCThreadManager
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * ================================================
@@ -39,6 +41,29 @@ object ANRMonitor : Printer {
      * 创建时间: 2022/6/3 16:42
      */
     @Volatile private var isStart = false
+
+    /**
+     * 是否是奇数，默认为偶数
+     * 用来记录调用print方法是奇数
+     * 还是偶数
+     * 作者:ZhouZhengyi
+     * 创建时间: 2022/6/5 10:16
+     */
+    private val isOdd : AtomicBoolean = AtomicBoolean(false)
+
+    /**
+     * 触发ANR的时间
+     * 作者:ZhouZhengyi
+     * 创建时间: 2022/6/5 11:17
+     */
+    private var triggerANRTime : Long = 0L
+
+    /**
+     * 当前正在处理的消息
+     * 作者:ZhouZhengyi
+     * 创建时间: 2022/6/5 11:31
+     */
+    private var mCurrentMessage : MonitorMessage? = null
 
     /**
      * 初始化
@@ -103,7 +128,40 @@ object ANRMonitor : Printer {
         }
     }
 
+
     override fun println(x: String?) {
-        TODO("Not yet implemented")
+        //如果是偶数次调用，并且是结束标志，则返回
+       if(x!!.contains("<<<<< Finished to") && !isOdd.get()){
+           return
+       }
+        //1.开始且偶数
+        //2.开始且奇数
+        //3.结束且奇数
+        if(!isOdd.get()){
+            messageStart(x)
+        }else{
+            messageEnd(x)
+        }
+        isOdd.set(!isOdd.get())
+    }
+
+    /**
+     * Looper取到了新的消息，开始执行
+     * 作者:ZhouZhengyi
+     * 创建时间: 2022/6/5 11:13
+     */
+    private fun messageStart(log: String?) {
+        var tempStartTime = SystemClock.elapsedRealtime()
+        triggerANRTime = tempStartTime + mConfig!!.anrTime
+        mCurrentMessage = MessageParser.parsePrinterStart(log!!)
+    }
+
+    /**
+     * Looper将消息处理完毕
+     * 作者:ZhouZhengyi
+     * 创建时间: 2022/6/5 11:13
+     */
+    private fun messageEnd(x: String?) {
+
     }
 }
