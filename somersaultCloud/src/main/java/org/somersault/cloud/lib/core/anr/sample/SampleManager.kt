@@ -1,7 +1,7 @@
 package org.somersault.cloud.lib.core.anr.sample
 
 import org.somersault.cloud.lib.core.anr.bean.MessageInfo
-import org.somersault.cloud.lib.core.interf.ISampleListener
+import org.somersault.cloud.lib.core.anr.interf.ISampleListener
 
 /**
  * ================================================

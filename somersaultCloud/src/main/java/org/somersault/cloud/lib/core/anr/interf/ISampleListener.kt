@@ -1,4 +1,4 @@
-package org.somersault.cloud.lib.core.interf
+package org.somersault.cloud.lib.core.anr.interf
 
 import org.somersault.cloud.lib.core.anr.bean.MessageInfo
 

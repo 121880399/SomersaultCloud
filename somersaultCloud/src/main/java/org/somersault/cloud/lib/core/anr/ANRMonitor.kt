@@ -203,13 +203,17 @@ object ANRMonitor : Printer {
          * 创建时间: 2022/6/3 17:22
          */
         var anrTime = 0L
+
+        var msgId = noInit
         run {
             anrTime = SystemClock.elapsedRealtime() + mConfig!!.anrTime!!
             while (isStart){
                 var now = SystemClock.elapsedRealtime()
                 if(now >= anrTime){
                     //时间到了
+                    if(mCurrentMsgId == msgId){
 
+                    }
                 }
             }
         }
@@ -280,7 +284,7 @@ object ANRMonitor : Printer {
         Logger.d(TAG,"messageEnd ThreadId:${Thread.currentThread().id}")
         mLastEndTime = SystemClock.elapsedRealtime()
         mLastCpuEndTime = SystemClock.currentThreadTimeMillis()
-        var costTime = mLastEndTime - mTempStartTime
+        var costTime = mLastEndTime - mStartTime
         handleJank(costTime)
         //判断是否是ActivityThread的消息
         val isActivityThreadMsg = MessageParser.isActivityThreadMsg(mCurrentMessage!!)
@@ -299,7 +303,7 @@ object ANRMonitor : Printer {
             mMessageInfo = MessageInfo()
             mMessageInfo!!.msgType = MessageInfo.MsgType.MSG_TYPE_WARN
             mMessageInfo!!.wallTime = costTime
-            mMessageInfo!!.cpuTime = mLastCpuEndTime - mCpuTempStartTime
+            mMessageInfo!!.cpuTime = mLastCpuEndTime - mCpuStartTime
             mMessageInfo!!.messages.add(mCurrentMessage!!)
             val isANR = costTime > mConfig!!.anrTime
             if(isANR){
@@ -312,7 +316,21 @@ object ANRMonitor : Printer {
             if(isANR){
                 mSampleManager!!.onHandleANRFinish()
             }
+        }else{
+            //todo 这里逻辑需要再考虑一下，主要是考虑普通聚合消息和警告消息的区别
+            //如果该消息的处理时间小于配置的警告时间,则将这类消息聚合
+            mMessageInfo!!.wallTime += costTime
+            mMessageInfo!!.cpuTime += mLastCpuEndTime - mCpuStartTime
+            mMessageInfo!!.messages.add(mCurrentMessage!!)
+            mMessageInfo!!.count++
+            if(mMessageInfo!!.wallTime > mConfig!!.warnTime){
+                //如果聚合后发现耗时超过了配置的警告时间，则认为是警告消息，需要生产一条新的MessageInfo
+                handleMessage()
+            }else{
+                mMessageInfo!!.msgType = MessageInfo.MsgType.MSG_TYPE_INFO
+            }
         }
+        mCurrentMsgId++
     }
 
     private fun handleMessage(){

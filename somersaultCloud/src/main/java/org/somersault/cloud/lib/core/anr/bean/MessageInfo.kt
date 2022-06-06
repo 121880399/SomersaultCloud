@@ -37,7 +37,17 @@ class MessageInfo : Serializable{
     )
     annotation class MsgType {
         companion object {
+            /**
+             * 用于初始化
+             * 作者:ZhouZhengyi
+             * 创建时间: 2022/6/6 9:52
+             */
             const val MSG_TYPE_NONE = 0X00
+            /**
+             * 普通的消息聚合消息
+             * 作者:ZhouZhengyi
+             * 创建时间: 2022/6/6 9:51
+             */
             const val MSG_TYPE_INFO = 0X01
 
             /**
