@@ -27,28 +27,29 @@ import java.util.concurrent.atomic.AtomicBoolean
 object ANRMonitor : Printer {
     private val TAG = "ANRMonitor"
 
-    private var mContext : Context? = null
+    private var mContext: Context? = null
 
     /**
      * 配置信息
      * 作者:ZhouZhengyi
      * 创建时间: 2022/6/3 16:13
      */
-    private var mConfig : ANRConfig? = null
+    private var mConfig: ANRConfig? = null
 
     /**
      * 采样管理者
      * 作者:ZhouZhengyi
      * 创建时间: 2022/6/3 16:13
      */
-    private var mSampleManager : SampleManager? = null
+    private var mSampleManager: SampleManager? = null
 
     /**
      * 记录是否已经开启，防止重复开启
      * 作者:ZhouZhengyi
      * 创建时间: 2022/6/3 16:42
      */
-    @Volatile private var isStart = false
+    @Volatile
+    private var isStart = false
 
     /**
      * 是否是奇数，默认为偶数
@@ -57,28 +58,29 @@ object ANRMonitor : Printer {
      * 作者:ZhouZhengyi
      * 创建时间: 2022/6/5 10:16
      */
-    private val isOdd : AtomicBoolean = AtomicBoolean(false)
+    private val isOdd: AtomicBoolean = AtomicBoolean(false)
 
     /**
      * 触发ANR的时间
      * 作者:ZhouZhengyi
      * 创建时间: 2022/6/5 11:17
      */
-    private var triggerANRTime : Long = 0L
+    private var triggerANRTime: Long = 0L
 
     /**
      * 当前正在处理的消息
      * 作者:ZhouZhengyi
      * 创建时间: 2022/6/5 11:31
      */
-    private var mCurrentMessage : MonitorMessage? = null
+    private var mCurrentMessage: MonitorMessage? = null
 
     /**
      * 当前消息id
      * 作者:ZhouZhengyi
      * 创建时间: 2022/6/5 15:04
      */
-    @Volatile private var mCurrentMsgId  = 0L
+    @Volatile
+    private var mCurrentMsgId = 0L
 
     /**
      * 未初始化的标记
@@ -135,7 +137,7 @@ object ANRMonitor : Printer {
      * 作者:ZhouZhengyi
      * 创建时间: 2022/6/5 16:24
      */
-    private var mMessageInfo : MessageInfo? = null
+    private var mMessageInfo: MessageInfo? = null
 
     /**
      * 每一帧的时间
@@ -149,21 +151,24 @@ object ANRMonitor : Printer {
      * 作者:ZhouZhengyi
      * 创建时间: 2022/6/3 16:44
      */
-    fun init(context : Context):ANRMonitor {
+    fun init(context: Context): ANRMonitor {
         mContext = context.applicationContext
         //初始化时给出默认配置
-        config(ANRConfig(
-            anrTime = 3000,
-            warnTime = 300,
-            idleTime = 50,
-            isOpenMonitor = true
-        ))
+        config(
+            ANRConfig(
+                anrTime = 3000,
+                warnTime = 300,
+                idleTime = 50,
+                isOpenMonitor = true
+            )
+        )
         mSampleManager = SampleManager
 
         mFrameIntervalNanos = try {
-            val fieldValue  = Reflector.QuietReflector.on(Choreographer::class.java).bind(Choreographer.getInstance()).field("mFrameIntervalNanos") as Long
-            fieldValue *  0.000001f
-        }catch (e : Exception){
+            val fieldValue = Reflector.QuietReflector.on(Choreographer::class.java)
+                .bind(Choreographer.getInstance()).field("mFrameIntervalNanos") as Long
+            fieldValue * 0.000001f
+        } catch (e: Exception) {
             e.printStackTrace()
             16000000 * 0.000001f
         }
@@ -175,7 +180,7 @@ object ANRMonitor : Printer {
      * 作者:ZhouZhengyi
      * 创建时间: 2022/6/3 16:44
      */
-    fun config(config : ANRConfig):ANRMonitor{
+    fun config(config: ANRConfig): ANRMonitor {
         this.mConfig = config
         return this
     }
@@ -186,8 +191,8 @@ object ANRMonitor : Printer {
      * 创建时间: 2022/6/3 16:44
      */
     @Synchronized
-    fun start(){
-        if(isStart) return
+    fun start() {
+        if (isStart) return
         isStart = true
         Looper.getMainLooper().setMessageLogging(this)
         SCThreadManager.runOnANRMonitorThread(mANRRunnable)
@@ -207,11 +212,11 @@ object ANRMonitor : Printer {
         var msgId = noInit
         run {
             anrTime = SystemClock.elapsedRealtime() + mConfig!!.anrTime!!
-            while (isStart){
+            while (isStart) {
                 var now = SystemClock.elapsedRealtime()
-                if(now >= anrTime){
+                if (now >= anrTime) {
                     //时间到了
-                    if(mCurrentMsgId == msgId){
+                    if (mCurrentMsgId == msgId) {
 
                     }
                 }
@@ -222,15 +227,15 @@ object ANRMonitor : Printer {
 
     override fun println(x: String?) {
         //如果是偶数次调用，并且是结束标志，则返回
-       if(x!!.contains("<<<<< Finished to") && !isOdd.get()){
-           return
-       }
+        if (x!!.contains("<<<<< Finished to") && !isOdd.get()) {
+            return
+        }
         //1.开始且偶数
         //2.开始且奇数
         //3.结束且奇数
-        if(!isOdd.get()){
+        if (!isOdd.get()) {
             messageStart(x)
-        }else{
+        } else {
             messageEnd(x)
         }
         isOdd.set(!isOdd.get())
@@ -247,9 +252,9 @@ object ANRMonitor : Printer {
         mCurrentMessage = MessageParser.parsePrinterStart(log!!)
         mCurrentMessage!!.msgId = mCurrentMsgId
         mCpuTempStartTime = SystemClock.currentThreadTimeMillis()
-        if(mTempStartTime - mLastEndTime > mConfig!!.idleTime && mLastEndTime != noInit){
+        if (mTempStartTime - mLastEndTime > mConfig!!.idleTime && mLastEndTime != noInit) {
             //如果上次结束的时间和当前开始的时间差距大于配置的间隔时间，则认为是空闲时间,需要增加一个空闲消息，并且不会存在两个连续的空闲消息
-            if(mMessageInfo != null){
+            if (mMessageInfo != null) {
                 handleMessage()
             }
             mMessageInfo = MessageInfo()
@@ -259,7 +264,7 @@ object ANRMonitor : Printer {
             mStartTime = mTempStartTime
             handleMessage()
         }
-        if(mMessageInfo == null){
+        if (mMessageInfo == null) {
             //创建一条新的MessageInfo，重置所有的计时
             mMessageInfo = MessageInfo()
             mStartTime = SystemClock.elapsedRealtime()
@@ -281,77 +286,90 @@ object ANRMonitor : Printer {
      */
     private fun messageEnd(x: String?) {
         //这里添加日志信息，看看该方法是否是多线程在调用
-        Logger.d(TAG,"messageEnd ThreadId:${Thread.currentThread().id}")
+        Logger.d(TAG, "messageEnd ThreadId:${Thread.currentThread().id}")
         mLastEndTime = SystemClock.elapsedRealtime()
         mLastCpuEndTime = SystemClock.currentThreadTimeMillis()
         var costTime = mLastEndTime - mStartTime
         handleJank(costTime)
         //判断是否是ActivityThread的消息
         val isActivityThreadMsg = MessageParser.isActivityThreadMsg(mCurrentMessage!!)
-        if(mMessageInfo == null){
+        if (mMessageInfo == null) {
             //如果在这个位置为空，只有是anr采集的时候将原来的messageInfo置为空了
             mMessageInfo = MessageInfo()
         }
+        decideMessageType(costTime, isActivityThreadMsg)
+        mCurrentMsgId++
+    }
+
+    private fun decideMessageType(costTime: Long, isActivityThreadMsg: Boolean) {
         //如果该消息的处理时间大于配置的警告时间
-        if(costTime > mConfig!!.warnTime || isActivityThreadMsg){
-            if(mMessageInfo!!.count > 1){
+        if (costTime > mConfig!!.warnTime || isActivityThreadMsg) {
+            if (mMessageInfo!!.count > 0) {
                 //先将之前的MessageInfo作为一条普通的INFO消息处理掉
                 mMessageInfo!!.msgType = MessageInfo.MsgType.MSG_TYPE_INFO
                 handleMessage()
             }
             //然后再将该消息作为一条独立的警告消息(MessageInfo)
             mMessageInfo = MessageInfo()
-            mMessageInfo!!.msgType = MessageInfo.MsgType.MSG_TYPE_WARN
             mMessageInfo!!.wallTime = costTime
             mMessageInfo!!.cpuTime = mLastCpuEndTime - mCpuStartTime
+            mMessageInfo!!.msgType = MessageInfo.MsgType.MSG_TYPE_WARN
             mMessageInfo!!.messages.add(mCurrentMessage!!)
             val isANR = costTime > mConfig!!.anrTime
-            if(isANR){
-                //如果该消息超过配置的ANR时间，则认为是ANR消息
-                mMessageInfo!!.msgType = MessageInfo.MsgType.MSG_TYPE_ANR
-            }else if (isActivityThreadMsg){
-                mMessageInfo!!.msgType = MessageInfo.MsgType.MSG_TYPE_ACTIVITY_THREAD_H
+            when {
+                isANR -> {
+                    //如果该消息超过配置的ANR时间，则认为是ANR消息
+                    mMessageInfo!!.msgType = MessageInfo.MsgType.MSG_TYPE_ANR
+                }
+                isActivityThreadMsg -> {
+                    mMessageInfo!!.msgType = MessageInfo.MsgType.MSG_TYPE_ACTIVITY_THREAD_H
+                }
             }
             handleMessage()
-            if(isANR){
+            if (isANR) {
                 mSampleManager!!.onHandleANRFinish()
             }
-        }else{
-            //todo 这里逻辑需要再考虑一下，主要是考虑普通聚合消息和警告消息的区别
-            //如果该消息的处理时间小于配置的警告时间,则将这类消息聚合
-            mMessageInfo!!.wallTime += costTime
-            mMessageInfo!!.cpuTime += mLastCpuEndTime - mCpuStartTime
+        } else {
+            if ((mMessageInfo!!.wallTime + costTime) > mConfig!!.warnTime) {
+                //如果聚合后发现耗时超过了配置的阈值，则处理掉之前的消息，再生成一条新的MessageInfo
+                mMessageInfo!!.msgType = MessageInfo.MsgType.MSG_TYPE_INFO
+                handleMessage()
+                mMessageInfo = MessageInfo()
+                mMessageInfo!!.wallTime = costTime
+                mMessageInfo!!.cpuTime = mLastCpuEndTime - mCpuStartTime
+            } else {
+                //如果消息聚合后没有超过配置的阈值，则将耗时累加
+                mMessageInfo!!.wallTime += costTime
+                mMessageInfo!!.cpuTime += mLastCpuEndTime - mCpuStartTime
+            }
             mMessageInfo!!.messages.add(mCurrentMessage!!)
             mMessageInfo!!.count++
-            if(mMessageInfo!!.wallTime > mConfig!!.warnTime){
-                //如果聚合后发现耗时超过了配置的警告时间，则认为是警告消息，需要生产一条新的MessageInfo
-                handleMessage()
-            }else{
-                mMessageInfo!!.msgType = MessageInfo.MsgType.MSG_TYPE_INFO
-            }
+            mMessageInfo!!.msgType = MessageInfo.MsgType.MSG_TYPE_INFO
         }
-        mCurrentMsgId++
     }
 
-    private fun handleMessage(){
-        if(mMessageInfo == null){
+
+    private fun handleMessage() {
+        if (mMessageInfo == null) {
             return
         }
         val tempMessage = mMessageInfo
-        mSampleManager!!.onMsgSample(SystemClock.elapsedRealtimeNanos(),"$mCurrentMsgId",tempMessage!!)
+        mSampleManager!!.onMsgSample(
+            SystemClock.elapsedRealtimeNanos(),
+            "$mCurrentMsgId",
+            tempMessage!!
+        )
         mMessageInfo = null
     }
 
-    private fun handleJank(costTime : Long){
-        if(MessageParser.isDoFrame(mCurrentMessage!!) && costTime > mFrameIntervalNanos * mConfig!!.jankFrame){
-            val tempMessage = mMessageInfo
-            mMessageInfo = MessageInfo()
-            mMessageInfo!!.msgType = MessageInfo.MsgType.MSG_TYPE_JANK
-            mMessageInfo!!.wallTime = costTime
-            mMessageInfo!!.cpuTime = mLastCpuEndTime - mCpuTempStartTime
-            mMessageInfo!!.messages.add(mCurrentMessage!!)
-            mSampleManager!!.onJankSample("$mCurrentMsgId",mMessageInfo!!)
-            mMessageInfo = tempMessage
+    private fun handleJank(costTime: Long) {
+        if (MessageParser.isDoFrame(mCurrentMessage!!) && costTime > mFrameIntervalNanos * mConfig!!.jankFrame) {
+            val tempMessage = MessageInfo()
+            tempMessage!!.msgType = MessageInfo.MsgType.MSG_TYPE_JANK
+            tempMessage!!.wallTime = costTime
+            tempMessage!!.cpuTime = mLastCpuEndTime - mCpuTempStartTime
+            tempMessage!!.messages.add(mCurrentMessage!!)
+            mSampleManager!!.onJankSample("$mCurrentMsgId", tempMessage!!)
         }
     }
 }

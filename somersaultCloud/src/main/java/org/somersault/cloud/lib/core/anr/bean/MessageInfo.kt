@@ -80,6 +80,8 @@ class MessageInfo : Serializable{
 
             /**
              * 通过ActivityThread$H handler发送的消息
+             * 这类消息属于关键消息，因为会调用引起ANR的组件
+             * 如Activity，Service，Receiver，Provider
              * 作者:ZhouZhengyi
              * 创建时间: 2022/6/5 15:31
              */
@@ -96,7 +98,7 @@ class MessageInfo : Serializable{
      * 作者:ZhouZhengyi
      * 创建时间: 2022/6/5 16:03
      */
-    var count: Int = 0
+    var count: Int = 1
 
     /**
      * 消息执行耗时，包括等待时间
