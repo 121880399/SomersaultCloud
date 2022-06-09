@@ -17,7 +17,7 @@ object SampleManager : ISampleListener {
         TODO("Not yet implemented")
     }
 
-    override fun onMsgSample(time: Long, msgId: String, msg: MessageInfo) {
+    override fun onMsgSample(time: Long, msg: MessageInfo) {
         TODO("Not yet implemented")
     }
 

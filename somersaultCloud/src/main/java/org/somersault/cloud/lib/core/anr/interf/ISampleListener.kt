@@ -12,7 +12,7 @@ import org.somersault.cloud.lib.core.anr.bean.MessageInfo
  */
 interface ISampleListener {
 
-    fun onMsgSample(time:Long,msgId : String,msg:MessageInfo)
+    fun onMsgSample(time:Long,msg:MessageInfo)
 
     fun onJankSample(msgId: String,msg : MessageInfo)
 

@@ -1,7 +1,6 @@
 package org.somersault.cloud.lib.core.anr
 
 import android.annotation.SuppressLint
-import android.app.Application
 import android.content.Context
 import android.os.Looper
 import android.os.SystemClock
@@ -209,18 +208,65 @@ object ANRMonitor : Printer {
          */
         var anrTime = 0L
 
-        var msgId = noInit
+        /**
+         * 这里单独记录一个消息id，
+         * 该id不主动自增，而是通过与
+         * 外面的id对齐来改变值
+         * 如果该id跟外面的id不一致
+         * 说明外面的id发生了改变，
+         * 也就说明Looper执行了下一
+         * 条消息，如果该id跟外面的
+         * id一致，说明超过ANR时间后
+         * Looper还在执行之前的消息，
+         * 说明发生了ANR
+         * 作者:ZhouZhengyi
+         * 创建时间: 2022/6/9 8:22
+         */
+        var msgId = 0L
         run {
             anrTime = SystemClock.elapsedRealtime() + mConfig!!.anrTime!!
             while (isStart) {
                 var now = SystemClock.elapsedRealtime()
                 if (now >= anrTime) {
-                    //时间到了
+                    //时间到了，如果id一致，说明Looper还在执行原消息，那么也就发生了ANR
                     if (mCurrentMsgId == msgId) {
-
+                        if (isStart) {
+                            //由于可能执行到这里的时候，主线程也执行完了消息，可能会同时操作，出现异常，所以这里加锁
+                            synchronized(ANRMonitor::class.java) {
+                                //设置新的ANR到期时间
+                                anrTime = now + mConfig!!.anrTime
+                                Logger.d(TAG, "start dump stack")
+                                //需要将之前的消息处理完
+                                handleMessage()
+                                mMessageInfo = MessageInfo()
+                                mMessageInfo!!.wallTime = now - mStartTime
+                                //这里取的是主线程的cpu执行时间，所以没办法获取到，暂时设置为-1吧
+                                mMessageInfo!!.cpuTime = -1
+                                mMessageInfo!!.msgType = MessageInfo.MsgType.MSG_TYPE_ANR
+                                mMessageInfo!!.messages.add(mCurrentMessage!!)
+                                //处理该ANR消息，这里不能等到messageEnd时才调用，因为那个方法是消息执行完成才会调用
+                                //而发生ANR时，可能还没到消息执行完成APP就被杀死了，导致messageEnd不会被调用
+                                // 所以这里监控到超时就应该输出ANR并且 dump各种信息
+                                handleMessage()
+                                //开始采集信息
+                                mSampleManager!!.startANRSample(
+                                    mCurrentMsgId.toString(),
+                                    SystemClock.elapsedRealtime()
+                                )
+                            }
+                        }
+                    } else {
+                        //时间到了，发现id不一致，说明Looper已经执行了下一条消息，那么只需要进行对齐
+                        msgId = mCurrentMsgId
+                        anrTime = triggerANRTime
                     }
                 }
+                val sleepTime = anrTime - SystemClock.elapsedRealtime()
+                if (sleepTime > 0) {
+                    SystemClock.sleep(sleepTime)
+                }
             }
+            Logger.d(TAG, "ANR Monitor Thread finish")
         }
     }
 
@@ -255,15 +301,18 @@ object ANRMonitor : Printer {
         if (mTempStartTime - mLastEndTime > mConfig!!.idleTime && mLastEndTime != noInit) {
             //如果上次结束的时间和当前开始的时间差距大于配置的间隔时间，则认为是空闲时间,需要增加一个空闲消息，并且不会存在两个连续的空闲消息
             if (mMessageInfo != null) {
+                //如果之前存在聚合的消息，则先处理掉
                 handleMessage()
             }
             mMessageInfo = MessageInfo()
-            mMessageInfo!!.msgType = MessageInfo.MsgType.MSG_TYPE_GAP
+            mMessageInfo!!.msgType = MessageInfo.MsgType.MSG_TYPE_IDLE
             mMessageInfo!!.wallTime = mTempStartTime - mLastEndTime
             mMessageInfo!!.cpuTime = mCpuTempStartTime - mLastCpuEndTime
             mStartTime = mTempStartTime
+            //idle消息不能聚合，所以马上处理
             handleMessage()
         }
+        //处理完毕后，需要重新创建一条MessageInfo,因为这时候处理的是looper获取的新消息
         if (mMessageInfo == null) {
             //创建一条新的MessageInfo，重置所有的计时
             mMessageInfo = MessageInfo()
@@ -272,7 +321,6 @@ object ANRMonitor : Printer {
             mCpuStartTime = SystemClock.currentThreadTimeMillis()
             mCpuTempStartTime = mCpuStartTime
         }
-        // TODO: 注意，如果mMessage不为null,并且没有超过idleTime，则不会被执行，这里之后看看有没问题
     }
 
     /**
@@ -285,20 +333,20 @@ object ANRMonitor : Printer {
      * 创建时间: 2022/6/5 11:13
      */
     private fun messageEnd(x: String?) {
-        //这里添加日志信息，看看该方法是否是多线程在调用
-        Logger.d(TAG, "messageEnd ThreadId:${Thread.currentThread().id}")
-        mLastEndTime = SystemClock.elapsedRealtime()
-        mLastCpuEndTime = SystemClock.currentThreadTimeMillis()
-        var costTime = mLastEndTime - mStartTime
-        handleJank(costTime)
-        //判断是否是ActivityThread的消息
-        val isActivityThreadMsg = MessageParser.isActivityThreadMsg(mCurrentMessage!!)
-        if (mMessageInfo == null) {
-            //如果在这个位置为空，只有是anr采集的时候将原来的messageInfo置为空了
-            mMessageInfo = MessageInfo()
+        synchronized(ANRMonitor::class.java) {
+            mLastEndTime = SystemClock.elapsedRealtime()
+            mLastCpuEndTime = SystemClock.currentThreadTimeMillis()
+            var costTime = mLastEndTime - mStartTime
+            handleJank(costTime)
+            //判断是否是ActivityThread的消息
+            val isActivityThreadMsg = MessageParser.isActivityThreadMsg(mCurrentMessage!!)
+            if (mMessageInfo == null) {
+                //如果在这个位置为空，只有是anr采集的时候将原来的messageInfo置为空了
+                mMessageInfo = MessageInfo()
+            }
+            decideMessageType(costTime, isActivityThreadMsg)
+            mCurrentMsgId++
         }
-        decideMessageType(costTime, isActivityThreadMsg)
-        mCurrentMsgId++
     }
 
     private fun decideMessageType(costTime: Long, isActivityThreadMsg: Boolean) {
@@ -356,7 +404,6 @@ object ANRMonitor : Printer {
         val tempMessage = mMessageInfo
         mSampleManager!!.onMsgSample(
             SystemClock.elapsedRealtimeNanos(),
-            "$mCurrentMsgId",
             tempMessage!!
         )
         mMessageInfo = null

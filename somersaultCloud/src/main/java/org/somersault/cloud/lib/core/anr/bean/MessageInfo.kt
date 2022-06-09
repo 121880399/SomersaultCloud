@@ -4,7 +4,7 @@ import android.os.SystemClock
 import androidx.annotation.IntDef
 import org.somersault.cloud.lib.core.anr.bean.MessageInfo.MsgType.Companion.MSG_TYPE_ACTIVITY_THREAD_H
 import org.somersault.cloud.lib.core.anr.bean.MessageInfo.MsgType.Companion.MSG_TYPE_ANR
-import org.somersault.cloud.lib.core.anr.bean.MessageInfo.MsgType.Companion.MSG_TYPE_GAP
+import org.somersault.cloud.lib.core.anr.bean.MessageInfo.MsgType.Companion.MSG_TYPE_IDLE
 import org.somersault.cloud.lib.core.anr.bean.MessageInfo.MsgType.Companion.MSG_TYPE_INFO
 import org.somersault.cloud.lib.core.anr.bean.MessageInfo.MsgType.Companion.MSG_TYPE_JANK
 import org.somersault.cloud.lib.core.anr.bean.MessageInfo.MsgType.Companion.MSG_TYPE_NONE
@@ -32,7 +32,7 @@ class MessageInfo : Serializable{
         MSG_TYPE_WARN,
         MSG_TYPE_ANR,
         MSG_TYPE_JANK,
-        MSG_TYPE_GAP,
+        MSG_TYPE_IDLE,
         MSG_TYPE_ACTIVITY_THREAD_H
     )
     annotation class MsgType {
@@ -76,7 +76,7 @@ class MessageInfo : Serializable{
              * 作者:ZhouZhengyi
              * 创建时间: 2022/6/5 15:31
              */
-            const val MSG_TYPE_GAP = 0X05
+            const val MSG_TYPE_IDLE = 0X05
 
             /**
              * 通过ActivityThread$H handler发送的消息
@@ -147,7 +147,7 @@ class MessageInfo : Serializable{
                 MSG_TYPE_WARN -> "MSG_TYPE_WARN"
                 MSG_TYPE_ANR -> "MSG_TYPE_ANR"
                 MSG_TYPE_JANK -> "MSG_TYPE_JANK"
-                MSG_TYPE_GAP -> "MSG_TYPE_GAP"
+                MSG_TYPE_IDLE -> "MSG_TYPE_GAP"
                 MSG_TYPE_ACTIVITY_THREAD_H -> "MSG_TYPE_ACTIVITY_THREAD_H"
                 else -> "MSG_TYPE_NONE"
             }
