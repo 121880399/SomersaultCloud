@@ -233,6 +233,8 @@ object ANRMonitor : Printer {
                         if (isStart) {
                             //由于可能执行到这里的时候，主线程也执行完了消息，可能会同时操作，出现异常，所以这里加锁
                             synchronized(ANRMonitor::class.java) {
+                                if(mCurrentMsgId != msgId){
+                                }
                                 //设置新的ANR到期时间
                                 anrTime = now + mConfig!!.anrTime
                                 Logger.d(TAG, "start dump stack")
@@ -349,6 +351,7 @@ object ANRMonitor : Printer {
         }
     }
 
+    @Synchronized
     private fun decideMessageType(costTime: Long, isActivityThreadMsg: Boolean) {
         //如果该消息的处理时间大于配置的警告时间
         if (costTime > mConfig!!.warnTime || isActivityThreadMsg) {
