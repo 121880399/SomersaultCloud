@@ -13,6 +13,7 @@ import org.somersault.cloud.lib.manager.SCThreadManager
 import org.somersault.cloud.lib.utils.Logger
 import org.somersault.cloud.lib.utils.Reflector
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.locks.ReentrantLock
 
 /**
  * ================================================
@@ -146,6 +147,13 @@ object ANRMonitor : Printer {
     private var mFrameIntervalNanos = 0f
 
     /**
+     * 可重入锁，用来解决两个线程同时操作临界区资源带来的问题
+     * 作者:ZhouZhengyi
+     * 创建时间: 2022/6/17 19:49
+     */
+    private var mLock: ReentrantLock? = null
+
+    /**
      * 初始化
      * 作者:ZhouZhengyi
      * 创建时间: 2022/6/3 16:44
@@ -162,7 +170,7 @@ object ANRMonitor : Printer {
             )
         )
         mSampleManager = SampleManager
-
+        mLock = ReentrantLock()
         mFrameIntervalNanos = try {
             val fieldValue = Reflector.QuietReflector.on(Choreographer::class.java)
                 .bind(Choreographer.getInstance()).field("mFrameIntervalNanos") as Long
@@ -189,13 +197,13 @@ object ANRMonitor : Printer {
      * 作者:ZhouZhengyi
      * 创建时间: 2022/6/3 16:44
      */
-    @Synchronized
     fun start() {
+        mLock!!.lock()
         if (isStart) return
         isStart = true
         Looper.getMainLooper().setMessageLogging(this)
         SCThreadManager.runOnANRMonitorThread(mANRRunnable)
-
+        mLock!!.unlock()
     }
 
     private val mANRRunnable = Runnable {
@@ -232,30 +240,32 @@ object ANRMonitor : Printer {
                     if (mCurrentMsgId == msgId) {
                         if (isStart) {
                             //由于可能执行到这里的时候，主线程也执行完了消息，可能会同时操作，出现异常，所以这里加锁
-                            synchronized(ANRMonitor::class.java) {
-                                if(mCurrentMsgId != msgId){
-                                }
-                                //设置新的ANR到期时间
-                                anrTime = now + mConfig!!.anrTime
-                                Logger.d(TAG, "start dump stack")
-                                //需要将之前的消息处理完
-                                handleMessage()
-                                mMessageInfo = MessageInfo()
-                                mMessageInfo!!.wallTime = now - mStartTime
-                                //这里取的是主线程的cpu执行时间，所以没办法获取到，暂时设置为-1吧
-                                mMessageInfo!!.cpuTime = -1
-                                mMessageInfo!!.msgType = MessageInfo.MsgType.MSG_TYPE_ANR
-                                mMessageInfo!!.messages.add(mCurrentMessage!!)
-                                //处理该ANR消息，这里不能等到messageEnd时才调用，因为那个方法是消息执行完成才会调用
-                                //而发生ANR时，可能还没到消息执行完成APP就被杀死了，导致messageEnd不会被调用
-                                // 所以这里监控到超时就应该输出ANR并且 dump各种信息
-                                handleMessage()
-                                //开始采集信息
-                                mSampleManager!!.startANRSample(
-                                    mCurrentMsgId.toString(),
-                                    SystemClock.elapsedRealtime()
-                                )
+                            mLock!!.lock()
+                            if (mCurrentMsgId != msgId) {
+                                //由于kotlin语法不支持continue在synchronized里用，所以这里使用ReentranLock
+                                continue
                             }
+                            //设置新的ANR到期时间
+                            anrTime = now + mConfig!!.anrTime
+                            Logger.d(TAG, "start dump stack")
+                            //需要将之前的消息处理完
+                            handleMessage()
+                            mMessageInfo = MessageInfo()
+                            mMessageInfo!!.wallTime = now - mStartTime
+                            //这里取的是主线程的cpu执行时间，所以没办法获取到，暂时设置为-1吧
+                            mMessageInfo!!.cpuTime = -1
+                            mMessageInfo!!.msgType = MessageInfo.MsgType.MSG_TYPE_ANR
+                            mMessageInfo!!.messages.add(mCurrentMessage!!)
+                            //处理该ANR消息，这里不能等到messageEnd时才调用，因为那个方法是消息执行完成才会调用
+                            //而发生ANR时，可能还没到消息执行完成APP就被杀死了，导致messageEnd不会被调用
+                            // 所以这里监控到超时就应该输出ANR并且 dump各种信息
+                            handleMessage()
+                            //开始采集信息
+                            mSampleManager!!.startANRSample(
+                                mCurrentMsgId.toString(),
+                                SystemClock.elapsedRealtime()
+                            )
+                            mLock!!.unlock()
                         }
                     } else {
                         //时间到了，发现id不一致，说明Looper已经执行了下一条消息，那么只需要进行对齐
@@ -270,6 +280,7 @@ object ANRMonitor : Printer {
             }
             Logger.d(TAG, "ANR Monitor Thread finish")
         }
+
     }
 
 
@@ -335,23 +346,23 @@ object ANRMonitor : Printer {
      * 创建时间: 2022/6/5 11:13
      */
     private fun messageEnd(x: String?) {
-        synchronized(ANRMonitor::class.java) {
-            mLastEndTime = SystemClock.elapsedRealtime()
-            mLastCpuEndTime = SystemClock.currentThreadTimeMillis()
-            var costTime = mLastEndTime - mStartTime
-            handleJank(costTime)
-            //判断是否是ActivityThread的消息
-            val isActivityThreadMsg = MessageParser.isActivityThreadMsg(mCurrentMessage!!)
-            if (mMessageInfo == null) {
-                //如果在这个位置为空，只有是anr采集的时候将原来的messageInfo置为空了
-                mMessageInfo = MessageInfo()
-            }
-            decideMessageType(costTime, isActivityThreadMsg)
-            mCurrentMsgId++
+        mLock!!.lock()
+        mLastEndTime = SystemClock.elapsedRealtime()
+        mLastCpuEndTime = SystemClock.currentThreadTimeMillis()
+        var costTime = mLastEndTime - mStartTime
+        handleJank(costTime)
+        //判断是否是ActivityThread的消息
+        val isActivityThreadMsg = MessageParser.isActivityThreadMsg(mCurrentMessage!!)
+        if (mMessageInfo == null) {
+            //如果在这个位置为空，只有是anr采集的时候将原来的messageInfo置为空了
+            mMessageInfo = MessageInfo()
         }
+        decideMessageType(costTime, isActivityThreadMsg)
+        mCurrentMsgId++
+        mLock!!.unlock()
     }
 
-    @Synchronized
+
     private fun decideMessageType(costTime: Long, isActivityThreadMsg: Boolean) {
         //如果该消息的处理时间大于配置的警告时间
         if (costTime > mConfig!!.warnTime || isActivityThreadMsg) {
