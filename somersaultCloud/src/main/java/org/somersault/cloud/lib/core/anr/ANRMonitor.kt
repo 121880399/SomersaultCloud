@@ -25,7 +25,7 @@ import java.util.concurrent.locks.ReentrantLock
  */
 @SuppressLint("StaticFieldLeak")
 object ANRMonitor : Printer {
-    private val TAG = "ANRMonitor"
+    private const val TAG = "ANRMonitor"
 
     private var mContext: Context? = null
 
@@ -154,6 +154,13 @@ object ANRMonitor : Printer {
     private var mLock: ReentrantLock? = null
 
     /**
+     * 用于记录已经采样过的消息id，以免重复进行采样
+     * 作者:ZhouZhengyi
+     * 创建时间: 2022/6/18 10:34
+     */
+    private val mSampleRecord : HashSet<Long> = HashSet()
+
+    /**
      * 初始化
      * 作者:ZhouZhengyi
      * 创建时间: 2022/6/3 16:44
@@ -260,11 +267,15 @@ object ANRMonitor : Printer {
                             //而发生ANR时，可能还没到消息执行完成APP就被杀死了，导致messageEnd不会被调用
                             // 所以这里监控到超时就应该输出ANR并且 dump各种信息
                             handleMessage()
-                            //开始采集信息
-                            mSampleManager!!.startANRSample(
-                                mCurrentMsgId.toString(),
-                                SystemClock.elapsedRealtime()
-                            )
+                            //为了防止重复采样
+                            if(!mSampleRecord.contains(mCurrentMsgId)){
+                                mSampleRecord.add(mCurrentMsgId)
+                                //开始采集信息
+                                mSampleManager!!.startANRSample(
+                                    mCurrentMsgId.toString(),
+                                    SystemClock.elapsedRealtime()
+                                )
+                            }
                             mLock!!.unlock()
                         }
                     } else {
@@ -284,17 +295,23 @@ object ANRMonitor : Printer {
     }
 
 
+    /**
+     * 重写了系统的Printer类中的方法
+     * 作者:ZhouZhengyi
+     * 创建时间: 2022/6/18 11:21
+     */
     override fun println(x: String?) {
-        //如果是偶数次调用，并且是结束标志，则返回
+        //因为我们不知道，我们开始hook后，Looper目前执行到什么位置
+        //有可能正好执行到Finished，那么通过以下判断就可以保证start一定对应偶数
+        //finished一定对应奇数
         if (x!!.contains("<<<<< Finished to") && !isOdd.get()) {
             return
         }
-        //1.开始且偶数
-        //2.开始且奇数
-        //3.结束且奇数
         if (!isOdd.get()) {
+            //偶数打印start
             messageStart(x)
         } else {
+            //奇数打印end
             messageEnd(x)
         }
         isOdd.set(!isOdd.get())

@@ -41,6 +41,13 @@ object SCThreadManager {
      */
     private var mANRMonitorSingleThreadExecutor : ThreadPoolExecutor ? = null
 
+    /**
+     * ANR采集专用单线程池
+     * 作者:ZhouZhengyi
+     * 创建时间: 2022/6/18 14:24
+     */
+    private var mANRSampleSingleThreadExecutor : ThreadPoolExecutor ? = null
+
     private var mMainThreadHandler : Handler ? = null
 
     init {
@@ -60,6 +67,14 @@ object SCThreadManager {
             TimeUnit.SECONDS,LinkedBlockingQueue(), ThreadFactory {
                 val thread = Thread(it)
                 thread.name = "ANR_Monitor_Thread"
+                return@ThreadFactory thread
+            })
+
+        mANRSampleSingleThreadExecutor = ThreadPoolExecutor(1,1,60L,
+            TimeUnit.SECONDS,LinkedBlockingQueue(),
+            ThreadFactory {
+                val thread = Thread(it)
+                thread.name = "ANR_Sample_Thread"
                 return@ThreadFactory thread
             })
         mMainThreadHandler = Handler(Looper.getMainLooper())
@@ -100,5 +115,14 @@ object SCThreadManager {
      */
     fun runOnANRMonitorThread(runnable: Runnable){
         mANRMonitorSingleThreadExecutor!!.execute(runnable)
+    }
+
+    /**
+     * 在ANR采样线程池中运行
+     * 作者:ZhouZhengyi
+     * 创建时间: 2022/6/18 14:33
+     */
+    fun runOnANRSampleThread(runnable: Runnable){
+        mANRSampleSingleThreadExecutor!!.execute(runnable)
     }
 }
