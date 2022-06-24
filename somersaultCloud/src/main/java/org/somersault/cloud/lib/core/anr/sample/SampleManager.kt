@@ -104,9 +104,25 @@ object SampleManager : ISampleListener {
             override fun onSampleError(errorInfo: String) {
                 Logger.d(TAG, "Thread stack Sample error! $errorInfo")
             }
+        })
+
+        //初始化Activity采集器
+        val activitySampler = ActivitySampler()
+        activitySampler.setSampleListener(object : ISampleResultListener{
+            override fun onSampleSuccess(msgId: String, result: String, anrTime: Long) {
+                mHandler?.forEach{
+                    it.handleThreadStackSample(anrTime,msgId,result)
+                    Logger.d(TAG,"Activity stack Sample finished!")
+                }
+            }
+
+            override fun onSampleError(errorInfo: String) {
+                Logger.d(TAG, "Activity Sample error! $errorInfo")
+            }
 
         })
-        mANRSampler = listOf(cpuSampler, memorySampler, messageQueueSampler, threadStackSampler)
+
+        mANRSampler = mutableListOf(cpuSampler, memorySampler, messageQueueSampler, threadStackSampler)
     }
 
     /**
@@ -119,7 +135,7 @@ object SampleManager : ISampleListener {
         val fileHandler = FileHandler()
         //初始化日志处理器
         val logHandler = LogHandler()
-        mHandler = listOf(fileHandler,logHandler)
+        mHandler = mutableListOf(fileHandler,logHandler)
     }
 
     /**

@@ -6,6 +6,7 @@ import org.somersault.cloud.lib.core.anr.interf.IANRSampleListener
 import org.somersault.cloud.lib.core.anr.interf.ISampleResultListener
 import java.io.BufferedReader
 import java.io.FileInputStream
+import java.io.IOException
 import java.io.InputStreamReader
 import java.lang.StringBuilder
 
@@ -20,6 +21,8 @@ import java.lang.StringBuilder
 class CpuSampler : IANRSampleListener {
 
     private var mSampleResultListener: ISampleResultListener? = null
+
+    private var mCPUArchitecture  = ""
 
     override fun doSample(msgId: String, anrTime: Long) {
         getCpuData(msgId, anrTime)
@@ -57,6 +60,9 @@ class CpuSampler : IANRSampleListener {
             val reader = BufferedReader(InputStreamReader(process.inputStream))
             var line = ""
             val result = StringBuilder()
+            val cpuCount = Runtime.getRuntime().availableProcessors()
+            result.append("cpu count:$cpuCount ")
+            result.append("abi:${getCPUABI()} ")
             //记录CPU在第几列
             var cpuIndex = -1
             while ((reader.readLine().also { line = it }) != null) {
@@ -142,16 +148,16 @@ class CpuSampler : IANRSampleListener {
             if (pidRate == null) {
                 pidRate = ""
             }
-            val result = parse(cpuRate,pidRate)
-            if(mSampleResultListener != null){
-                mSampleResultListener!!.onSampleSuccess(msgId,result,anrTime)
+            val result = parse(cpuRate, pidRate)
+            if (mSampleResultListener != null) {
+                mSampleResultListener!!.onSampleSuccess(msgId, result, anrTime)
             }
-        }catch (e:Exception) {
+        } catch (e: Exception) {
             e.printStackTrace()
-            if(mSampleResultListener != null) {
+            if (mSampleResultListener != null) {
                 mSampleResultListener!!.onSampleError(e.toString())
             }
-        }finally {
+        } finally {
             cpuReader?.close()
             pidReader?.close()
         }
@@ -168,13 +174,15 @@ class CpuSampler : IANRSampleListener {
      * 创建时间: 2022/6/23 9:31
      */
     private fun parse(cpuRate: String, pidRate: String): String {
-       val cpuInfoParam = cpuRate.split("\\s+")
+        val cpuInfoParam = cpuRate.split("\\s+")
         val result = StringBuilder()
-        if(cpuInfoParam.size < 9){
+        //得到CPU核数
+        val cpuCount = Runtime.getRuntime().availableProcessors()
+        result.append("cpu count:$cpuCount ")
+        result.append("abi:${getCPUABI()} ")
+        if (cpuInfoParam.size < 9) {
             return ""
         }
-        //得到CPU核数
-        val cpuCount =Runtime.getRuntime().availableProcessors()
 
         // TODO: 这里需要测试数据的准确性，看是否取错了值
         //从2开始是因为CPU后面有一个空格
@@ -194,15 +202,15 @@ class CpuSampler : IANRSampleListener {
         val softIrq = cpuInfoParam[8].toLong()
         val total = cpuUser + nice + cpuSystem + idle + ioWait + irq + softIrq
 
-        result.append("cpu:").append((total-idle)/total*100).append("% ")
-            .append("user:").append(cpuUser/total*100).append("% ")
-            .append("system:").append(cpuSystem/total*100).append("% ")
-            .append("ioWait:").append(ioWait/total*100).append("% ")
-            .append("irq:").append(irq/total*100).append("% ")
-            .append("softIrq:").append(softIrq/total*100).append("% ")
+        result.append("cpu:").append((total - idle) / total * 100).append("% ")
+            .append("user:").append(cpuUser / total * 100).append("% ")
+            .append("system:").append(cpuSystem / total * 100).append("% ")
+            .append("ioWait:").append(ioWait / total * 100).append("% ")
+            .append("irq:").append(irq / total * 100).append("% ")
+            .append("softIrq:").append(softIrq / total * 100).append("% ")
 
         val pidInfoParam = pidRate.split("\\s+")
-        if(pidInfoParam.size < 17){
+        if (pidInfoParam.size < 17) {
             return result.toString()
         }
         //该任务在用户态运行的时间，单位为jiffies
@@ -216,8 +224,31 @@ class CpuSampler : IANRSampleListener {
 
         val appCpuTime = utime + stime + cutime + cstime
 
-        result.append("appCpu:").append(appCpuTime/total*100*cpuCount).append("% ")
+        result.append("appCpu:").append(appCpuTime / total * 100 * cpuCount).append("% ")
 
         return result.toString()
+    }
+
+
+    /**
+     * 获取CPU架构
+     * 作者:ZhouZhengyi
+     * 创建时间: 2022/6/24 8:45
+     */
+    fun getCPUABI():String{
+        if (TextUtils.isEmpty(mCPUArchitecture)) {
+            try {
+                val cpuAbi = BufferedReader(
+                    InputStreamReader(
+                        Runtime.getRuntime().exec("getprop ro.product.cpu.abi")
+                            .inputStream
+                    )
+                ).readLine()
+                mCPUArchitecture = cpuAbi
+            }catch (e: IOException) {
+                e.printStackTrace()
+            }
+        }
+        return mCPUArchitecture
     }
 }

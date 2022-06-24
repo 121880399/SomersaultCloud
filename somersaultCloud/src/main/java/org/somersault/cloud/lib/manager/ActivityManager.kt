@@ -88,6 +88,23 @@ class ActivityManager private constructor(): Application.ActivityLifecycleCallba
         return 0
     }
 
+    /**
+     * 获取当前栈中Activity信息
+     * 作者:ZhouZhengyi
+     * 创建时间: 2022/6/24 9:48
+     */
+    fun getStackInfo():String{
+        if(!mActivityStack.empty()){
+            val result = StringBuilder()
+            mActivityStack.forEach {
+                result.append(it.javaClass.name)
+                result.append("\n")
+            }
+            return result.toString()
+        }
+        return ""
+    }
+
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
         createdActivityCount++
