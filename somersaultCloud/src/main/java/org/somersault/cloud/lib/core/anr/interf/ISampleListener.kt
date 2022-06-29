@@ -16,11 +16,4 @@ interface ISampleListener {
 
     fun onJankSample(msgId: String,msg : MessageInfo)
 
-    /**
-     * 当ANR消息处理完毕
-     * 作者:ZhouZhengyi
-     * 创建时间: 2022/6/5 18:01
-     */
-    fun onHandleANRFinish()
-
 }

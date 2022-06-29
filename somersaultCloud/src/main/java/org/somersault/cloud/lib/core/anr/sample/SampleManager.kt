@@ -1,5 +1,7 @@
 package org.somersault.cloud.lib.core.anr.sample
 
+import android.os.Looper
+import android.util.Printer
 import org.somersault.cloud.lib.core.anr.bean.MessageInfo
 import org.somersault.cloud.lib.core.anr.handler.FileHandler
 import org.somersault.cloud.lib.core.anr.handler.LogHandler
@@ -149,6 +151,8 @@ object SampleManager : ISampleListener {
             mANRSampler!!.forEach {
                 it.doSample(msgId,anrTime)
             }
+            //获取当前消息队列中剩余消息的情况
+            Looper.getMainLooper().dump(MessageQueuePrinter(anrTime,msgId),"")
         }
     }
 
@@ -160,7 +164,14 @@ object SampleManager : ISampleListener {
         TODO("Not yet implemented")
     }
 
-    override fun onHandleANRFinish() {
-        TODO("Not yet implemented")
+
+    class MessageQueuePrinter(var anrTime: Long,var msgId: String) : Printer {
+
+        override fun println(x: String?) {
+            mHandler?.forEach{
+                it.handleMessageQueueSample(anrTime,msgId,x!!)
+            }
+        }
+
     }
 }
