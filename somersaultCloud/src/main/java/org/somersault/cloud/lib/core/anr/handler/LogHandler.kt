@@ -1,5 +1,6 @@
 package org.somersault.cloud.lib.core.anr.handler
 
+import org.somersault.cloud.lib.core.anr.bean.MessageInfo
 import org.somersault.cloud.lib.core.anr.interf.ISampleHandlerListener
 
 /**
@@ -25,6 +26,14 @@ class LogHandler:ISampleHandlerListener {
     }
 
     override fun handleThreadStackSample(time: Long, msgId: String, msg: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun handleMsgSample(time: Long, msg: MessageInfo) {
+        TODO("Not yet implemented")
+    }
+
+    override fun hanleJankSample(time: Long, msg: MessageInfo) {
         TODO("Not yet implemented")
     }
 }

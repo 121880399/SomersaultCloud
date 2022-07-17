@@ -406,7 +406,7 @@ object ANRMonitor : Printer {
             }
             handleMessage()
             if (isANR) {
-                mSampleManager!!.onHandleANRFinish()
+//                mSampleManager!!.onHandleANRFinish()
             }
         } else {
             if ((mMessageInfo!!.wallTime + costTime) > mConfig!!.warnTime) {

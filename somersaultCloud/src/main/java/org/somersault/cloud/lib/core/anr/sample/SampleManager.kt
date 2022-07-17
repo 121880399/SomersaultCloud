@@ -53,10 +53,10 @@ object SampleManager : ISampleListener {
         val cpuSampler = CpuSampler()
         cpuSampler.setSampleListener(object : ISampleResultListener {
             override fun onSampleSuccess(msgId: String, result: String, anrTime: Long) {
-               mHandler?.forEach{
-                   it.handleCpuSample(anrTime,msgId,result)
-                   Logger.d(TAG,"CPU Sample finished!")
-               }
+                mHandler?.forEach {
+                    it.handleCpuSample(anrTime, msgId, result)
+                    Logger.d(TAG, "CPU Sample finished!")
+                }
             }
 
             override fun onSampleError(errorInfo: String) {
@@ -67,9 +67,9 @@ object SampleManager : ISampleListener {
         val memorySampler = MemorySampler()
         memorySampler.setSampleListener(object : ISampleResultListener {
             override fun onSampleSuccess(msgId: String, result: String, anrTime: Long) {
-                mHandler?.forEach{
-                    it.handleMemorySample(anrTime,msgId,result)
-                    Logger.d(TAG,"Memory Sample finished!")
+                mHandler?.forEach {
+                    it.handleMemorySample(anrTime, msgId, result)
+                    Logger.d(TAG, "Memory Sample finished!")
                 }
             }
 
@@ -82,9 +82,9 @@ object SampleManager : ISampleListener {
         val messageQueueSampler = MessageQueueSampler()
         messageQueueSampler.setSampleListener(object : ISampleResultListener {
             override fun onSampleSuccess(msgId: String, result: String, anrTime: Long) {
-                mHandler?.forEach{
-                    it.handleMessageQueueSample(anrTime,msgId,result)
-                    Logger.d(TAG,"MessageQueue Sample finished!")
+                mHandler?.forEach {
+                    it.handleMessageQueueSample(anrTime, msgId, result)
+                    Logger.d(TAG, "MessageQueue Sample finished!")
                 }
             }
 
@@ -97,9 +97,9 @@ object SampleManager : ISampleListener {
         val threadStackSampler = ThreadStackSampler()
         threadStackSampler.setSampleListener(object : ISampleResultListener {
             override fun onSampleSuccess(msgId: String, result: String, anrTime: Long) {
-                mHandler?.forEach{
-                    it.handleThreadStackSample(anrTime,msgId,result)
-                    Logger.d(TAG,"Thread stack Sample finished!")
+                mHandler?.forEach {
+                    it.handleThreadStackSample(anrTime, msgId, result)
+                    Logger.d(TAG, "Thread stack Sample finished!")
                 }
             }
 
@@ -110,11 +110,11 @@ object SampleManager : ISampleListener {
 
         //初始化Activity采集器
         val activitySampler = ActivitySampler()
-        activitySampler.setSampleListener(object : ISampleResultListener{
+        activitySampler.setSampleListener(object : ISampleResultListener {
             override fun onSampleSuccess(msgId: String, result: String, anrTime: Long) {
-                mHandler?.forEach{
-                    it.handleThreadStackSample(anrTime,msgId,result)
-                    Logger.d(TAG,"Activity stack Sample finished!")
+                mHandler?.forEach {
+                    it.handleThreadStackSample(anrTime, msgId, result)
+                    Logger.d(TAG, "Activity stack Sample finished!")
                 }
             }
 
@@ -124,7 +124,8 @@ object SampleManager : ISampleListener {
 
         })
 
-        mANRSampler = mutableListOf(cpuSampler, memorySampler, messageQueueSampler, threadStackSampler)
+        mANRSampler =
+            mutableListOf(cpuSampler, memorySampler, messageQueueSampler, threadStackSampler)
     }
 
     /**
@@ -137,7 +138,7 @@ object SampleManager : ISampleListener {
         val fileHandler = FileHandler()
         //初始化日志处理器
         val logHandler = LogHandler()
-        mHandler = mutableListOf(fileHandler,logHandler)
+        mHandler = mutableListOf(fileHandler, logHandler)
     }
 
     /**
@@ -149,15 +150,17 @@ object SampleManager : ISampleListener {
         Logger.d(TAG, "start ANR Sample!")
         SCThreadManager.runOnANRSampleThread {
             mANRSampler!!.forEach {
-                it.doSample(msgId,anrTime)
+                it.doSample(msgId, anrTime)
             }
             //获取当前消息队列中剩余消息的情况
-            Looper.getMainLooper().dump(MessageQueuePrinter(anrTime,msgId),"")
+            Looper.getMainLooper().dump(MessageQueuePrinter(anrTime, msgId), "")
         }
     }
 
     override fun onMsgSample(time: Long, msg: MessageInfo) {
-        TODO("Not yet implemented")
+        mHandler?.forEach {
+            it.handleMsgSample(time, msg)
+        }
     }
 
     override fun onJankSample(msgId: String, msg: MessageInfo) {
@@ -165,11 +168,11 @@ object SampleManager : ISampleListener {
     }
 
 
-    class MessageQueuePrinter(var anrTime: Long,var msgId: String) : Printer {
+    class MessageQueuePrinter(var anrTime: Long, var msgId: String) : Printer {
 
         override fun println(x: String?) {
-            mHandler?.forEach{
-                it.handleMessageQueueSample(anrTime,msgId,x!!)
+            mHandler?.forEach {
+                it.handleMessageQueueSample(anrTime, msgId, x!!)
             }
         }
 

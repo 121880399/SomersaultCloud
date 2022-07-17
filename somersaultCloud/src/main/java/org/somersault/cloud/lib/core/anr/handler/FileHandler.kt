@@ -1,5 +1,8 @@
 package org.somersault.cloud.lib.core.anr.handler
 
+import android.app.ApplicationErrorReport
+import org.somersault.cloud.lib.core.anr.bean.AnrInfo
+import org.somersault.cloud.lib.core.anr.bean.MessageInfo
 import org.somersault.cloud.lib.core.anr.interf.ISampleHandlerListener
 
 /**
@@ -11,6 +14,8 @@ import org.somersault.cloud.lib.core.anr.interf.ISampleHandlerListener
  * ================================================
  */
 class FileHandler:ISampleHandlerListener {
+
+    private var anrInfo:AnrInfo? = AnrInfo()
 
     override fun handleCpuSample(time: Long, msgId: String, msg: String) {
         TODO("Not yet implemented")
@@ -25,6 +30,14 @@ class FileHandler:ISampleHandlerListener {
     }
 
     override fun handleThreadStackSample(time: Long, msgId: String, msg: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun handleMsgSample(time: Long,  msg: MessageInfo) {
+
+    }
+
+    override fun hanleJankSample(time: Long, msg: MessageInfo) {
         TODO("Not yet implemented")
     }
 }
