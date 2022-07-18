@@ -58,12 +58,23 @@ class TimeLruCache<V> : Serializable{
         lastPutValue = value
     }
 
-    private class TimeLinkedHashMap<V> : LinkedHashMap<Long, V>{
+    /**
+     * 加上inner才能访问外部类变量
+     * 作者:ZhouZhengyi
+     * 创建时间: 2022/7/18 9:14
+     */
+    inner class TimeLinkedHashMap<V> : LinkedHashMap<Long, V>{
 
         constructor(initCapacity: Int, loadFactor: Float, accessOrder: Boolean) : super(initCapacity, loadFactor, accessOrder)
 
+        /**
+         * 返回true时，会删除最老的元素
+         * 如果最后一个数据的时间减去最老的数据的时间大于periodOfTime，则会删除最老的数据
+         * 作者:ZhouZhengyi
+         * 创建时间: 2022/7/18 8:55
+         */
         override fun removeEldestEntry(eldest: MutableMap.MutableEntry<Long, V>?): Boolean {
-            return size > 10
+            return lastPutTime - eldest!!.key > periodOfTime
         }
     }
 }

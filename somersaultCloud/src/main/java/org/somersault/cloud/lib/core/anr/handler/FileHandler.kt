@@ -34,10 +34,22 @@ class FileHandler:ISampleHandlerListener {
     }
 
     override fun handleMsgSample(time: Long,  msg: MessageInfo) {
-
+       anrInfo?.messageInfoCache?.put(time,msg)
+        if(MessageInfo.MsgType.MSG_TYPE_ANR == msg.msgType){
+            saveAnrInfo()
+        }
     }
 
     override fun hanleJankSample(time: Long, msg: MessageInfo) {
         TODO("Not yet implemented")
+    }
+
+    /**
+     * 将ANR信息保存到本地文件
+     * 作者:ZhouZhengyi
+     * 创建时间: 2022/7/18 9:31
+     */
+    fun saveAnrInfo(){
+
     }
 }
